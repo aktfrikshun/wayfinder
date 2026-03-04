@@ -9,8 +9,9 @@ RSpec.describe Child, type: :model do
   end
 
   it "enforces unique inbound alias" do
-    create(:child, inbound_alias: "zammy")
-    child = build(:child, inbound_alias: "zammy")
+    alias_name = "alias-#{SecureRandom.hex(4)}"
+    create(:child, inbound_alias: alias_name)
+    child = build(:child, inbound_alias: alias_name)
 
     expect(child).not_to be_valid
   end

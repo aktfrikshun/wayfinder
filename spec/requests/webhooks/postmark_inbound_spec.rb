@@ -4,7 +4,8 @@ RSpec.describe "Postmark inbound webhook", type: :request do
   before { clear_enqueued_jobs }
 
   it "creates communication and enqueues extraction" do
-    child = create(:child, inbound_alias: "zammy")
+    alias_name = "alias#{SecureRandom.hex(4)}"
+    child = create(:child, inbound_alias: alias_name)
 
     expect do
       post "/webhooks/postmark/inbound",
@@ -13,7 +14,7 @@ RSpec.describe "Postmark inbound webhook", type: :request do
              FromName: "Ms. Carter",
              Subject: "Math reminder",
              Date: "2026-03-04T12:00:00Z",
-             ToFull: [{ Email: "zammy@inbound.wayfinder.local" }],
+             ToFull: [{ Email: "#{alias_name}@inbound.wayfinder.local" }],
              TextBody: "Complete page 12",
              HtmlBody: "<p>Complete page 12</p>"
            }.to_json,
