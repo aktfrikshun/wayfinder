@@ -1,0 +1,25 @@
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/bootsnap-1.23.0/ext/bootsnap
+/Users/allentaylor/.rbenv/versions/3.4.1/bin/ruby extconf.rb
+checking for fdatasync() in unistd.h... yes
+checking for fstatat() in sys/stat.h... yes
+checking for whether -D_GNU_SOURCE is accepted as CPPFLAGS... yes
+checking for whether -O3 is accepted as CFLAGS... yes
+checking for whether -std=c99 is accepted as CFLAGS... yes
+creating Makefile
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/bootsnap-1.23.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-ruh2dd sitelibdir\=./.gem.20260304-29248-ruh2dd clean
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/bootsnap-1.23.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-ruh2dd sitelibdir\=./.gem.20260304-29248-ruh2dd
+compiling bootsnap.c
+linking shared-object bootsnap/bootsnap.bundle
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/bootsnap-1.23.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-ruh2dd sitelibdir\=./.gem.20260304-29248-ruh2dd install
+/usr/local/bin/ginstall -c -m 0755 bootsnap.bundle ./.gem.20260304-29248-ruh2dd/bootsnap
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/bootsnap-1.23.0/ext/bootsnap
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-ruh2dd sitelibdir\=./.gem.20260304-29248-ruh2dd clean

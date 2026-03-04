@@ -1,0 +1,20 @@
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/racc-1.8.1/ext/racc/cparse
+/Users/allentaylor/.rbenv/versions/3.4.1/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-o6n5qf sitelibdir\=./.gem.20260304-29248-o6n5qf clean
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-o6n5qf sitelibdir\=./.gem.20260304-29248-o6n5qf
+compiling cparse.c
+linking shared-object racc/cparse.bundle
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-o6n5qf sitelibdir\=./.gem.20260304-29248-o6n5qf install
+/usr/local/bin/ginstall -c -m 0755 cparse.bundle ./.gem.20260304-29248-o6n5qf/racc
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/racc-1.8.1/ext/racc/cparse
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-o6n5qf sitelibdir\=./.gem.20260304-29248-o6n5qf clean

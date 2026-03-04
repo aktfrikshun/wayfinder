@@ -1,0 +1,21 @@
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/erb-6.0.2/ext/erb/escape
+/Users/allentaylor/.rbenv/versions/3.4.1/bin/ruby extconf.rb
+checking for rb_ext_ractor_safe() in ruby.h... yes
+creating Makefile
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/erb-6.0.2/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-qkk6nr sitelibdir\=./.gem.20260304-29248-qkk6nr clean
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/erb-6.0.2/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-qkk6nr sitelibdir\=./.gem.20260304-29248-qkk6nr
+compiling escape.c
+linking shared-object erb/escape.bundle
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/erb-6.0.2/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-qkk6nr sitelibdir\=./.gem.20260304-29248-qkk6nr install
+/usr/local/bin/ginstall -c -m 0755 escape.bundle ./.gem.20260304-29248-qkk6nr/erb
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/erb-6.0.2/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-qkk6nr sitelibdir\=./.gem.20260304-29248-qkk6nr clean

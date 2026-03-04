@@ -1,0 +1,4 @@
+:concurrency: 5
+:queues:
+  - ai_extract
+  - default

@@ -1,0 +1,44 @@
+class OpenAIClient
+  API_BASE_URL = "https://api.openai.com".freeze
+
+  def initialize(api_key: ENV["OPENAI_API_KEY"], model: ENV.fetch("OPENAI_MODEL", "gpt-4.1-mini"))
+    @api_key = api_key
+    @model = model
+  end
+
+  def chat_json(system:, user:, json_schema:, temperature: 0.2)
+    response = connection.post("/v1/chat/completions") do |req|
+      req.headers["Authorization"] = "Bearer #{@api_key}"
+      req.headers["Content-Type"] = "application/json"
+      req.body = {
+        model: @model,
+        temperature: temperature,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: json_schema
+        }
+      }
+    end
+
+    raise "OpenAI API error: #{response.status}" unless response.success?
+
+    body = response.body
+    content = body.dig("choices", 0, "message", "content")
+    parsed_response = JSON.parse(content)
+
+    { raw_response: body, parsed_response: parsed_response }
+  end
+
+  private
+
+  def connection
+    @connection ||= Faraday.new(url: API_BASE_URL) do |faraday|
+      faraday.request :json
+      faraday.response :json
+    end
+  end
+end

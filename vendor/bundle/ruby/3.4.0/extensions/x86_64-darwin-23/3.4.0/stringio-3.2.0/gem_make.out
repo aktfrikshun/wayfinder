@@ -1,0 +1,21 @@
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/stringio-3.2.0/ext/stringio
+/Users/allentaylor/.rbenv/versions/3.4.1/bin/ruby extconf.rb
+checking for rb_io_mode_t in ruby/io.h... no
+creating Makefile
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-unxpme sitelibdir\=./.gem.20260304-29248-unxpme clean
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-unxpme sitelibdir\=./.gem.20260304-29248-unxpme
+compiling stringio.c
+linking shared-object stringio.bundle
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+ld: warning: directory not found for option '-L/usr/local/Cellar/gmp/6.2.1_1/lib'
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-unxpme sitelibdir\=./.gem.20260304-29248-unxpme install
+/usr/local/bin/ginstall -c -m 0755 stringio.bundle ./.gem.20260304-29248-unxpme
+
+current directory: /Users/allentaylor/src/wayfinder/vendor/bundle/ruby/3.4.0/gems/stringio-3.2.0/ext/stringio
+make DESTDIR\= sitearchdir\=./.gem.20260304-29248-unxpme sitelibdir\=./.gem.20260304-29248-unxpme clean

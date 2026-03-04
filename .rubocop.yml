@@ -1,0 +1,6 @@
+AllCops:
+  NewCops: enable
+
+require:
+  - rubocop-rails
+  - rubocop-rspec
