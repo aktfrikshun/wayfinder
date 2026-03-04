@@ -41,18 +41,19 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 ## Prerequisites
 
 - `rbenv` with Ruby from `.ruby-version`
-- PostgreSQL running on `localhost:5432`
-- Redis running on `localhost:6379`
+- Docker with Docker Compose
 
-Optional local Postgres via Docker:
+Start Postgres and Redis via Docker:
 
 ```bash
-docker run -d --name wayfinder-postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_DB=wayfinder_development \
-  -p 5432:5432 postgres:16
+docker compose up -d
+docker compose ps
 ```
+
+This exposes:
+
+- PostgreSQL on `localhost:5432`
+- Redis on `localhost:6379`
 
 ## Configuration
 
@@ -64,7 +65,7 @@ cp .env.example .env
 
 Important variables:
 
-- `DATABASE_URL=postgres://localhost:5432/wayfinder_development`
+- `DATABASE_URL=postgres://postgres:postgres@localhost:5432/wayfinder_development`
 - `REDIS_URL=redis://localhost:6379/0`
 - `OPENAI_API_KEY=...`
 - `OPENAI_MODEL=gpt-4.1-mini`
@@ -81,6 +82,8 @@ bundle install
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/wayfinder_development bin/setup --skip-server
 ```
 
+If you use Docker services from `docker-compose.yml`, the default `.env.example` values already point to the mapped localhost ports.
+
 ## Run locally
 
 Start web + worker together:
@@ -93,6 +96,12 @@ This launches:
 
 - Rails server on `http://localhost:3000`
 - Sidekiq worker using `config/sidekiq.yml`
+
+Stop data services when done:
+
+```bash
+docker compose down
+```
 
 ## Usage notes
 

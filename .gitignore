@@ -30,6 +30,9 @@
 
 /public/assets
 
+# Do not commit machine-specific bundled gems.
+/vendor/bundle
+/vendor/cache
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
-
