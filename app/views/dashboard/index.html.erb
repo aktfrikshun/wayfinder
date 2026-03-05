@@ -5,7 +5,7 @@
   </div>
 </div>
 
-<div class="grid grid-3" style="margin-bottom: 1rem;">
+<div class="grid grid-4" style="margin-bottom: 1rem;">
   <section class="card">
     <h3>Parents</h3>
     <div class="metric"><%= @parents_count %></div>
@@ -20,6 +20,11 @@
     <h3>Communications</h3>
     <div class="metric"><%= @communications_count %></div>
     <p class="muted">Messages captured</p>
+  </section>
+  <section class="card">
+    <h3>Users</h3>
+    <div class="metric"><%= @users_count %></div>
+    <p class="muted">Admin-managed accounts</p>
   </section>
 </div>
 
@@ -37,7 +42,7 @@
 </section>
 
 <% if @query.present? %>
-  <div class="grid grid-3" style="margin-bottom: 1rem;">
+  <div class="grid grid-4" style="margin-bottom: 1rem;">
     <section class="card">
       <h3>Parent Matches</h3>
       <% if @parents_results.present? %>
@@ -68,6 +73,17 @@
         <% end %>
       <% else %>
         <p class="muted">No communication matches.</p>
+      <% end %>
+    </section>
+
+    <section class="card">
+      <h3>User Matches</h3>
+      <% if @users_results.present? %>
+        <% @users_results.each do |user| %>
+          <p><%= link_to user.email, user_path(user) %> · <span class="muted"><%= user.role_label %></span></p>
+        <% end %>
+      <% else %>
+        <p class="muted">No user matches.</p>
       <% end %>
     </section>
   </div>

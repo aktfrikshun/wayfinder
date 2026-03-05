@@ -1,0 +1,18 @@
+<div class="page-head">
+  <div>
+    <h1><%= @user.email %></h1>
+    <p>Role <%= @user.role_label %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_user_path(@user), class: "btn" %>
+    <%= link_to "Back", users_path, class: "btn" %>
+  </div>
+</div>
+
+<section class="card">
+  <h3>Account Details</h3>
+  <p><strong>Email:</strong> <%= @user.email %></p>
+  <p><strong>Role:</strong> <%= @user.role_label %></p>
+  <p><strong>Created:</strong> <%= @user.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+  <p><strong>Updated:</strong> <%= @user.updated_at.strftime("%Y-%m-%d %H:%M") %></p>
+</section>

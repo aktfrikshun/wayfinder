@@ -7,6 +7,7 @@ class DashboardController < ApplicationController
     @parents_count = Parent.count
     @children_count = Child.count
     @communications_count = Communication.count
+    @users_count = User.count
 
     @recent_communications = Communication.includes(child: :parent).order(received_at: :desc).limit(8)
 
@@ -32,5 +33,7 @@ class DashboardController < ApplicationController
       )
       .order(received_at: :desc)
       .limit(10)
+
+    @users_results = User.where("email ILIKE :q OR role ILIKE :q", q: pattern).limit(10)
   end
 end

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :parents
   resources :children
   resources :communications
+  resources :users
 
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
   get "children/:id/communications", to: "api/children_communications#index"

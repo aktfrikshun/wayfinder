@@ -1,0 +1,43 @@
+<%= form_with model: user, local: true do |form| %>
+  <% if user.errors.any? %>
+    <div class="error-box">
+      <strong><%= pluralize(user.errors.count, "error") %> prevented save:</strong>
+      <ul>
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="full">
+      <%= form.label :email %>
+      <%= form.email_field :email, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :role %>
+      <%= form.select :role, User::ROLES.map { |key, label| [label, key] }, {}, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :password %>
+      <%= form.password_field :password, autocomplete: "new-password" %>
+    </div>
+
+    <div>
+      <%= form.label :password_confirmation %>
+      <%= form.password_field :password_confirmation, autocomplete: "new-password" %>
+    </div>
+  </div>
+
+  <% if user.persisted? %>
+    <p class="muted">Leave password fields blank to keep the current password.</p>
+  <% end %>
+
+  <div class="toolbar" style="margin-top: 1rem;">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", users_path, class: "btn" %>
+  </div>
+<% end %>
