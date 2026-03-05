@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v fly >/dev/null 2>&1; then
+  echo "fly CLI is required. Install from https://fly.io/docs/flyctl/install/"
+  exit 1
+fi
+
+export FLY_CONFIG_DIR="${FLY_CONFIG_DIR:-$(pwd)/.fly}"
+mkdir -p "${FLY_CONFIG_DIR}"
+
+DB_APP="${DB_APP:-wayfinder-frikshun-db}"
+DB_VOLUME="${DB_VOLUME:-pg_data}"
+DB_REGION="${DB_REGION:-iad}"
+DB_VOLUME_SIZE_GB="${DB_VOLUME_SIZE_GB:-20}"
+DB_NAME="${DB_NAME:-wayfinder_production}"
+DB_USER="${DB_USER:-wayfinder}"
+DB_PASSWORD="${DB_PASSWORD:-}"
+RAILS_APP="${RAILS_APP:-wayfinder-frikshun}"
+
+if [[ -z "${DB_PASSWORD}" ]]; then
+  echo "Set DB_PASSWORD (recommended: DB_PASSWORD=\$(openssl rand -hex 24))."
+  exit 1
+fi
+
+echo "==> Ensuring Fly app ${DB_APP} exists"
+if ! fly status -a "${DB_APP}" >/dev/null 2>&1; then
+  fly apps create "${DB_APP}"
+fi
+
+echo "==> Ensuring volume ${DB_VOLUME} exists on ${DB_APP}"
+if ! fly volumes list -a "${DB_APP}" | rg -q " ${DB_VOLUME} "; then
+  fly volumes create "${DB_VOLUME}" \
+    -a "${DB_APP}" \
+    --region "${DB_REGION}" \
+    --size "${DB_VOLUME_SIZE_GB}" \
+    --yes
+fi
+
+echo "==> Ensuring Postgres machine exists on ${DB_APP}"
+if ! fly machine list -a "${DB_APP}" | rg -q "postgres"; then
+  fly machine run postgres:16 \
+    -a "${DB_APP}" \
+    --region "${DB_REGION}" \
+    --name "${DB_APP}-postgres" \
+    --volume "${DB_VOLUME}:/var/lib/postgresql/data" \
+    --env POSTGRES_USER="${DB_USER}" \
+    --env POSTGRES_PASSWORD="${DB_PASSWORD}" \
+    --env POSTGRES_DB="${DB_NAME}" \
+    --env PGDATA="/var/lib/postgresql/data/pgdata" \
+    --restart always \
+    --vm-size shared-cpu-1x \
+    --vm-memory 1024
+fi
+
+cat <<EOF
+
+Postgres app is ready: ${DB_APP}
+Internal host: ${DB_APP}.internal
+
+Set Rails app secret:
+  fly secrets set -a ${RAILS_APP} DATABASE_URL='postgres://${DB_USER}:<db_password>@${DB_APP}.internal:5432/${DB_NAME}'
+
+Optional verification (from your local Fly WireGuard context):
+  fly ssh console -a ${RAILS_APP}
+  psql 'postgres://${DB_USER}:<db_password>@${DB_APP}.internal:5432/${DB_NAME}' -c 'select now();'
+
+EOF

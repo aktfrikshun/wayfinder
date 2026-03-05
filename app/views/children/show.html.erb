@@ -1,0 +1,24 @@
+<div class="page-head">
+  <div>
+    <h1><%= @child.name %></h1>
+    <p><%= @child.parent.email %> · Grade <%= @child.grade.presence || "-" %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_child_path(@child), class: "btn" %>
+    <%= link_to "Back", children_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h3>Profile</h3>
+    <p><strong>School:</strong> <%= @child.school_name.presence || "-" %></p>
+    <p><strong>Inbound Alias:</strong> <%= @child.inbound_alias.presence || "-" %></p>
+  </section>
+
+  <section class="card">
+    <h3>Communications</h3>
+    <p><strong>Total:</strong> <%= @child.communications.count %></p>
+    <%= link_to "View child API timeline", "/children/#{@child.id}/communications", class: "btn" %>
+  </section>
+</div>

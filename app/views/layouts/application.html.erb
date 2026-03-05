@@ -11,18 +11,37 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
   <body>
-    <%= yield %>
+    <header class="site-header">
+      <div class="shell nav-wrap">
+        <%= link_to "Wayfinder", root_path, class: "brand" %>
+        <nav class="nav-links">
+          <%= link_to "Dashboard", root_path, class: "nav-link" %>
+          <%= link_to "Parents", parents_path, class: "nav-link" %>
+          <%= link_to "Children", children_path, class: "nav-link" %>
+          <%= link_to "Communications", communications_path, class: "nav-link" %>
+          <% if user_signed_in? %>
+            <span class="nav-pill"><%= current_user.email %> · <%= current_user.role_label %></span>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "nav-link nav-button" %>
+          <% else %>
+            <%= link_to "Sign in", new_user_session_path, class: "nav-link" %>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <% flash.each do |kind, message| %>
+        <div class="flash flash-<%= kind %>"><%= message %></div>
+      <% end %>
+      <%= yield %>
+    </main>
   </body>
 </html>

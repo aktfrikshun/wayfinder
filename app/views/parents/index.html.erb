@@ -1,0 +1,46 @@
+<div class="page-head">
+  <div>
+    <h1>Parents</h1>
+    <p>Manage parent accounts and contact information.</p>
+  </div>
+  <%= link_to "New Parent", new_parent_path, class: "btn btn-primary" %>
+</div>
+
+<%= form_with url: parents_path, method: :get, local: true, class: "toolbar" do %>
+  <div style="flex: 1 1 320px;">
+    <label for="q">Search</label>
+    <%= text_field_tag :q, @query, placeholder: "Name or email" %>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-self: end;">
+    <%= submit_tag "Filter", class: "btn" %>
+    <%= link_to "Clear", parents_path, class: "btn" %>
+  </div>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Children</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @parents.each do |parent| %>
+        <tr>
+          <td><%= link_to(parent.name.presence || "(No Name)", parent_path(parent)) %></td>
+          <td><%= parent.email %></td>
+          <td><%= parent.children.count %></td>
+          <td>
+            <div class="inline-actions">
+              <%= link_to "Edit", edit_parent_path(parent), class: "btn" %>
+              <%= button_to "Delete", parent_path(parent), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this parent?" } } %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

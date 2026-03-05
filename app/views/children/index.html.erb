@@ -1,0 +1,50 @@
+<div class="page-head">
+  <div>
+    <h1>Children</h1>
+    <p>Manage child profiles, grade context, and inbound aliases.</p>
+  </div>
+  <%= link_to "New Child", new_child_path, class: "btn btn-primary" %>
+</div>
+
+<%= form_with url: children_path, method: :get, local: true, class: "toolbar" do %>
+  <div style="flex: 1 1 320px;">
+    <label for="q">Search</label>
+    <%= text_field_tag :q, @query, placeholder: "Child name, alias, parent email" %>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-self: end;">
+    <%= submit_tag "Filter", class: "btn" %>
+    <%= link_to "Clear", children_path, class: "btn" %>
+  </div>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Parent</th>
+        <th>Grade</th>
+        <th>School</th>
+        <th>Inbound Alias</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @children.each do |child| %>
+        <tr>
+          <td><%= link_to child.name, child_path(child) %></td>
+          <td><%= child.parent.email %></td>
+          <td><%= child.grade.presence || "-" %></td>
+          <td><%= child.school_name.presence || "-" %></td>
+          <td><%= child.inbound_alias.presence || "-" %></td>
+          <td>
+            <div class="inline-actions">
+              <%= link_to "Edit", edit_child_path(child), class: "btn" %>
+              <%= button_to "Delete", child_path(child), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this child?" } } %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,29 @@
+<%= form_with model: parent, local: true do |form| %>
+  <% if parent.errors.any? %>
+    <div class="error-box">
+      <strong><%= pluralize(parent.errors.count, "error") %> prevented save:</strong>
+      <ul>
+        <% parent.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name %>
+    </div>
+
+    <div>
+      <%= form.label :email %>
+      <%= form.email_field :email, required: true %>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top: 1rem;">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", parents_path, class: "btn" %>
+  </div>
+<% end %>

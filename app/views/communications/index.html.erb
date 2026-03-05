@@ -1,0 +1,50 @@
+<div class="page-head">
+  <div>
+    <h1>Communications</h1>
+    <p>Search and manage all inbound messages and extraction output.</p>
+  </div>
+  <%= link_to "New Communication", new_communication_path, class: "btn btn-primary" %>
+</div>
+
+<%= form_with url: communications_path, method: :get, local: true, class: "toolbar" do %>
+  <div style="flex: 1 1 320px;">
+    <label for="q">Search</label>
+    <%= text_field_tag :q, @query, placeholder: "Subject, sender, status, child" %>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-self: end;">
+    <%= submit_tag "Filter", class: "btn" %>
+    <%= link_to "Clear", communications_path, class: "btn" %>
+  </div>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Child</th>
+        <th>From</th>
+        <th>Status</th>
+        <th>Received</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @communications.each do |communication| %>
+        <tr>
+          <td><%= link_to communication.subject.presence || "(No Subject)", communication_path(communication) %></td>
+          <td><%= communication.child.name %></td>
+          <td><%= communication.from_email.presence || "-" %></td>
+          <td><span class="badge badge-<%= communication.ai_status %>"><%= communication.ai_status %></span></td>
+          <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          <td>
+            <div class="inline-actions">
+              <%= link_to "Edit", edit_communication_path(communication), class: "btn" %>
+              <%= button_to "Delete", communication_path(communication), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this communication?" } } %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

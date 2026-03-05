@@ -1,0 +1,25 @@
+app = "wayfinder-frikshun"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  RAILS_LOG_TO_STDOUT = "1"
+  RAILS_SERVE_STATIC_FILES = "1"
+
+[deploy]
+  release_command = "bundle exec rails db:migrate"
+
+[processes]
+  web = "bundle exec puma -C config/puma.rb"
+  worker = "bundle exec sidekiq -C config/sidekiq.yml"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["web"]

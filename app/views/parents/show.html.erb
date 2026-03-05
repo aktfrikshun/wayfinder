@@ -1,0 +1,23 @@
+<div class="page-head">
+  <div>
+    <h1><%= @parent.name.presence || "Parent" %></h1>
+    <p><%= @parent.email %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_parent_path(@parent), class: "btn" %>
+    <%= link_to "Back", parents_path, class: "btn" %>
+  </div>
+</div>
+
+<section class="card">
+  <h3>Children</h3>
+  <% if @parent.children.any? %>
+    <ul>
+      <% @parent.children.order(:name).each do |child| %>
+        <li><%= link_to child.name, child_path(child) %> <span class="muted">(<%= child.inbound_alias.presence || "no alias" %>)</span></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="muted">No children linked yet.</p>
+  <% end %>
+</section>

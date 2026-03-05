@@ -156,6 +156,15 @@ Pipeline runs:
 3. `bundle exec rails db:prepare`
 4. `bundle exec rspec`
 
+## Fly Deployment
+
+Fly deployment assets are included:
+
+- `fly.toml` (web + worker processes, release migration command)
+- `bin/fly/setup_db` (unmanaged Postgres app setup)
+- `bin/fly/deploy` (deploy helper)
+- `docs/deploy/fly.md` (full runbook)
+
 ## Security notes
 
 - Webhook token is validated before ingestion.

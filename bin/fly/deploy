@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v fly >/dev/null 2>&1; then
+  echo "fly CLI is required. Install from https://fly.io/docs/flyctl/install/"
+  exit 1
+fi
+
+export FLY_CONFIG_DIR="${FLY_CONFIG_DIR:-$(pwd)/.fly}"
+mkdir -p "${FLY_CONFIG_DIR}"
+
+APP="${FLY_APP:-wayfinder-frikshun}"
+CONFIG="${FLY_CONFIG:-fly.toml}"
+
+echo "==> Deploying ${APP} with ${CONFIG}"
+fly deploy -a "${APP}" --config "${CONFIG}" "$@"
+
+echo "==> Ensuring one machine for each process group"
+fly scale count -a "${APP}" web=1 worker=1 --yes

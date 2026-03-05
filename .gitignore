@@ -9,6 +9,8 @@
 
 # Ignore all environment files.
 /.env*
+# Ignore local Fly auth/config files.
+/.fly/
 
 # Ignore all logfiles and tempfiles.
 /log/*

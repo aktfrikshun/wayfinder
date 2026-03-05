@@ -1,0 +1,28 @@
+<div class="page-head">
+  <div>
+    <h1><%= @communication.subject.presence || "Communication" %></h1>
+    <p><%= @communication.child.name %> · <span class="badge badge-<%= @communication.ai_status %>"><%= @communication.ai_status %></span></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_communication_path(@communication), class: "btn" %>
+    <%= link_to "Back", communications_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h3>Message</h3>
+    <p><strong>From:</strong> <%= @communication.from_name.presence || "-" %> &lt;<%= @communication.from_email.presence || "-" %>&gt;</p>
+    <p><strong>Source:</strong> <%= @communication.source.presence || "-" %></p>
+    <p><strong>Received:</strong> <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>Text:</strong></p>
+    <pre><%= @communication.body_text.presence || "-" %></pre>
+  </section>
+
+  <section class="card">
+    <h3>AI Output</h3>
+    <p><strong>Error:</strong> <%= @communication.ai_error.presence || "None" %></p>
+    <p><strong>Extracted:</strong></p>
+    <pre><%= JSON.pretty_generate(@communication.ai_extracted || {}) %></pre>
+  </section>
+</div>

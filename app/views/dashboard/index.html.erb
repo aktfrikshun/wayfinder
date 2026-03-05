@@ -1,0 +1,106 @@
+<div class="page-head">
+  <div>
+    <h1>Command Center</h1>
+    <p>Search and manage parents, children, and communications in one place.</p>
+  </div>
+</div>
+
+<div class="grid grid-3" style="margin-bottom: 1rem;">
+  <section class="card">
+    <h3>Parents</h3>
+    <div class="metric"><%= @parents_count %></div>
+    <p class="muted">Total records</p>
+  </section>
+  <section class="card">
+    <h3>Children</h3>
+    <div class="metric"><%= @children_count %></div>
+    <p class="muted">Profiles tracked</p>
+  </section>
+  <section class="card">
+    <h3>Communications</h3>
+    <div class="metric"><%= @communications_count %></div>
+    <p class="muted">Messages captured</p>
+  </section>
+</div>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <%= form_with url: root_path, method: :get, local: true, class: "toolbar" do %>
+    <div style="flex: 1 1 320px;">
+      <label for="q">Global Search</label>
+      <%= text_field_tag :q, @query, placeholder: "Try: zammy, pending, allen@example.com" %>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-self: end;">
+      <%= submit_tag "Search", class: "btn btn-primary" %>
+      <%= link_to "Clear", root_path, class: "btn" %>
+    </div>
+  <% end %>
+</section>
+
+<% if @query.present? %>
+  <div class="grid grid-3" style="margin-bottom: 1rem;">
+    <section class="card">
+      <h3>Parent Matches</h3>
+      <% if @parents_results.present? %>
+        <% @parents_results.each do |parent| %>
+          <p><%= link_to(parent.name.presence || "(No Name)", parent_path(parent)) %> · <span class="muted"><%= parent.email %></span></p>
+        <% end %>
+      <% else %>
+        <p class="muted">No parent matches.</p>
+      <% end %>
+    </section>
+
+    <section class="card">
+      <h3>Child Matches</h3>
+      <% if @children_results.present? %>
+        <% @children_results.each do |child| %>
+          <p><%= link_to child.name, child_path(child) %> · <span class="muted"><%= child.parent.email %></span></p>
+        <% end %>
+      <% else %>
+        <p class="muted">No child matches.</p>
+      <% end %>
+    </section>
+
+    <section class="card">
+      <h3>Communication Matches</h3>
+      <% if @communications_results.present? %>
+        <% @communications_results.each do |communication| %>
+          <p><%= link_to(communication.subject.presence || "(No Subject)", communication_path(communication)) %> · <span class="muted"><%= communication.ai_status %></span></p>
+        <% end %>
+      <% else %>
+        <p class="muted">No communication matches.</p>
+      <% end %>
+    </section>
+  </div>
+<% end %>
+
+<section class="card">
+  <div class="page-head" style="margin-bottom: 0.75rem;">
+    <h3>Recent Communications</h3>
+    <%= link_to "Open Full List", communications_path, class: "btn" %>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Child</th>
+          <th>From</th>
+          <th>Status</th>
+          <th>Received</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_communications.each do |communication| %>
+          <tr>
+            <td><%= link_to communication.subject.presence || "(No Subject)", communication_path(communication) %></td>
+            <td><%= communication.child.name %></td>
+            <td><%= communication.from_email.presence || "-" %></td>
+            <td><span class="badge badge-<%= communication.ai_status %>"><%= communication.ai_status %></span></td>
+            <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
