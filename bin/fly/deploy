@@ -11,9 +11,16 @@ mkdir -p "${FLY_CONFIG_DIR}"
 
 APP="${FLY_APP:-wayfinder-frikshun}"
 CONFIG="${FLY_CONFIG:-fly.toml}"
+DEPOT_SCOPE="${FLY_DEPOT_SCOPE:-app}"
 
 echo "==> Deploying ${APP} with ${CONFIG}"
-fly deploy -a "${APP}" --config "${CONFIG}" "$@"
+fly deploy \
+  -a "${APP}" \
+  --config "${CONFIG}" \
+  --depot=true \
+  --depot-scope "${DEPOT_SCOPE}" \
+  --remote-only \
+  "$@"
 
 echo "==> Ensuring one machine for each process group"
 fly scale count -a "${APP}" web=1 worker=1 --yes

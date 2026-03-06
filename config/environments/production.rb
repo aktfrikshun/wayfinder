@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require Rails.root.join("lib/canonical_host_redirector")
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -57,7 +58,10 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = {
+    host: "wayfinder.frikshun.com",
+    protocol: "https"
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
@@ -79,10 +83,15 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
+  config.hosts << "wayfinder.frikshun.com"
+  config.hosts << "wayfinder-frikshun.fly.dev"
+  config.middleware.insert_before(
+    0,
+    CanonicalHostRedirector,
+    source_host: "wayfinder-frikshun.fly.dev",
+    target_host: "wayfinder.frikshun.com",
+    skip_paths: [ "/up" ]
+  )
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }

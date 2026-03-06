@@ -72,10 +72,17 @@ bin/fly/deploy
 The deploy uses:
 
 - Docker build from `Dockerfile`
+- Depot remote builder cache (`--depot=true --depot-scope app`) for faster rebuilds
 - `release_command = bundle exec rails db:migrate`
 - Process groups from `fly.toml`:
   - `web`: `bundle exec puma -C config/puma.rb`
   - `worker`: `bundle exec rake solid_queue:start`
+
+You can override cache scope if needed:
+
+```bash
+FLY_DEPOT_SCOPE=org bin/fly/deploy
+```
 
 ## 6) Verify
 

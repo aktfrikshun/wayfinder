@@ -159,7 +159,7 @@ Fly deployment assets are included:
 
 - `fly.toml` (web + worker processes, release migration command)
 - `bin/fly/setup_db` (unmanaged Postgres app setup)
-- `bin/fly/deploy` (deploy helper)
+- `bin/fly/deploy` (deploy helper with Depot layer cache)
 - `docs/deploy/fly.md` (full runbook)
 
 ## Security notes
