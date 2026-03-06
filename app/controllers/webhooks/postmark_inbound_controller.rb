@@ -3,7 +3,7 @@ module Webhooks
     skip_before_action :verify_authenticity_token
 
     def create
-      return head :unauthorized unless valid_webhook_token?
+      return head :unauthorized unless valid_webhook_auth?
 
       payload = parsed_payload
       inbound_email = extract_inbound_email(payload)
@@ -51,14 +51,35 @@ module Webhooks
     end
 
     private
+    # Accept Basic Auth (preferred) and keep token header fallback for compatibility.
+    def valid_webhook_auth?
+      basic_auth_valid? || token_header_valid?
+    end
 
-    def valid_webhook_token?
+    def basic_auth_valid?
+      username = ENV["POSTMARK_WEBHOOK_USERNAME"].presence
+      password = ENV["POSTMARK_WEBHOOK_SECRET"].presence
+
+      return false if username.blank? || password.blank?
+
+      authenticate_with_http_basic do |supplied_user, supplied_pass|
+        secure_compare(supplied_user, username) && secure_compare(supplied_pass, password)
+      end
+    end
+
+    def token_header_valid?
       supplied = request.headers["X-Postmark-Webhook-Token"].to_s
       expected = ENV.fetch("POSTMARK_WEBHOOK_SECRET", "")
 
       return false if expected.blank? || supplied.bytesize != expected.bytesize
 
-      ActiveSupport::SecurityUtils.secure_compare(supplied, expected)
+      secure_compare(supplied, expected)
+    end
+
+    def secure_compare(a, b)
+      return false if a.blank? || b.blank? || a.bytesize != b.bytesize
+
+      ActiveSupport::SecurityUtils.secure_compare(a, b)
     end
 
     def extract_inbound_email(payload)
