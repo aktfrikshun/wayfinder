@@ -1,0 +1,56 @@
+<div class="page-head">
+  <div>
+    <h1><%= @child.name %></h1>
+    <p>Grade <%= @child.grade.presence || "-" %> · <%= @child.school_name.presence || "School not set" %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_parent_child_path(@child), class: "btn" %>
+    <%= link_to "Back", parent_children_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h3>Profile</h3>
+    <p><strong>Name:</strong> <%= @child.name %></p>
+    <p><strong>Grade:</strong> <%= @child.grade.presence || "-" %></p>
+    <p><strong>School:</strong> <%= @child.school_name.presence || "-" %></p>
+    <p><strong>Inbound Alias:</strong> <%= @child.inbound_alias.presence || "-" %></p>
+  </section>
+
+  <section class="card">
+    <h3>Communications</h3>
+    <p><strong>Total:</strong> <%= @child.communications.count %></p>
+    <div class="toolbar" style="margin-top: 0.6rem;">
+      <%= link_to "View Messages", parent_communications_path(child_id: @child.id), class: "btn" %>
+    </div>
+  </section>
+</div>
+
+<section class="card" style="margin-top: 1rem;">
+  <h3>Recent Messages</h3>
+  <% if @recent_communications.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Received</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_communications.each do |communication| %>
+            <tr>
+              <td><%= link_to(communication.subject.presence || "(No Subject)", parent_communication_path(communication)) %></td>
+              <td><span class="badge badge-<%= communication.ai_status %>"><%= communication.ai_status %></span></td>
+              <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No communications for this child yet.</p>
+  <% end %>
+</section>

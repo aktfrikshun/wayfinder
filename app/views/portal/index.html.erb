@@ -1,0 +1,16 @@
+<div class="page-head">
+  <div>
+    <h1>Welcome</h1>
+    <p>Your account is signed in as <%= current_user.role_label %>.</p>
+  </div>
+</div>
+
+<section class="card">
+  <h3>Role Workspace</h3>
+  <p class="muted">A dedicated dashboard for this role is coming soon.</p>
+  <div class="toolbar" style="margin-top: 0.8rem;">
+    <% if impersonating? %>
+      <%= button_to "Stop Impersonating", stop_impersonating_path, method: :delete, class: "btn" %>
+    <% end %>
+  </div>
+</section>

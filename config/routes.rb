@@ -11,12 +11,21 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   root "dashboard#index"
+  get "portal", to: "portal#index"
 
   resources :parents
   resources :children
   resources :communications
   resources :users
+  post "users/:id/impersonate", to: "users#impersonate", as: :impersonate_user
+  delete "impersonation", to: "impersonations#destroy", as: :stop_impersonating
 
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
   get "children/:id/communications", to: "api/children_communications#index"
+
+  scope module: :parent_portal, path: "parent", as: :parent do
+    root "dashboard#index"
+    resources :children
+    resources :communications, only: %i[index show]
+  end
 end

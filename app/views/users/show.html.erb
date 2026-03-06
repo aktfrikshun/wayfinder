@@ -5,6 +5,9 @@
   </div>
   <div class="inline-actions">
     <%= link_to "Edit", edit_user_path(@user), class: "btn" %>
+    <% if @user != current_user %>
+      <%= button_to "Impersonate", impersonate_user_path(@user), method: :post, class: "btn", form: { data: { turbo_confirm: "Impersonate #{@user.email}?" } } %>
+    <% end %>
     <%= link_to "Back", users_path, class: "btn" %>
   </div>
 </div>

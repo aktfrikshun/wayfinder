@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_admin!
-  before_action :set_user, only: %i[show edit update destroy]
+  before_action :set_user, only: %i[show edit update destroy impersonate]
 
   def index
     @query = params[:q].to_s.strip
@@ -45,6 +45,17 @@ class UsersController < ApplicationController
 
     @user.destroy
     redirect_to users_path, notice: "User deleted."
+  end
+
+  def impersonate
+    if @user == current_user
+      redirect_to users_path, alert: "You are already signed in as this user."
+      return
+    end
+
+    session[:admin_impersonator_id] = current_user.id
+    sign_in(:user, @user)
+    redirect_to after_sign_in_path_for(@user), notice: "Now impersonating #{@user.email}."
   end
 
   private

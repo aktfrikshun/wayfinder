@@ -39,6 +39,7 @@
               <% if user == current_user %>
                 <span class="btn" style="opacity: 0.6;">Current User</span>
               <% else %>
+                <%= button_to "Impersonate", impersonate_user_path(user), method: :post, class: "btn", form: { data: { turbo_confirm: "Impersonate #{user.email}?" } } %>
                 <%= button_to "Delete", user_path(user), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this user?" } } %>
               <% end %>
             </div>

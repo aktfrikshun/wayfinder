@@ -1,0 +1,51 @@
+<div class="page-head">
+  <div>
+    <h1>Child Communications</h1>
+    <p>Review school messages across all your children.</p>
+  </div>
+  <%= link_to "Back to Dashboard", parent_root_path, class: "btn" %>
+</div>
+
+<%= form_with url: parent_communications_path, method: :get, local: true, class: "toolbar" do %>
+  <div style="flex: 1 1 220px;">
+    <label for="child_id">Child</label>
+    <%= select_tag :child_id,
+      options_from_collection_for_select(@parent.children.order(:name), :id, :name, @child_id),
+      include_blank: "All children" %>
+  </div>
+
+  <div style="flex: 2 1 320px;">
+    <label for="q">Search</label>
+    <%= text_field_tag :q, @query, placeholder: "Subject, sender, status" %>
+  </div>
+
+  <div style="display: flex; gap: 0.5rem; align-self: end;">
+    <%= submit_tag "Filter", class: "btn" %>
+    <%= link_to "Clear", parent_communications_path, class: "btn" %>
+  </div>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Child</th>
+        <th>From</th>
+        <th>Status</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @communications.each do |communication| %>
+        <tr>
+          <td><%= link_to(communication.subject.presence || "(No Subject)", parent_communication_path(communication)) %></td>
+          <td><%= communication.child.name %></td>
+          <td><%= communication.from_email.presence || "-" %></td>
+          <td><span class="badge badge-<%= communication.ai_status %>"><%= communication.ai_status %></span></td>
+          <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

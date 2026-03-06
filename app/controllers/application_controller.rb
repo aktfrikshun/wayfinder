@@ -11,17 +11,47 @@ class ApplicationController < ActionController::Base
     authenticate_user!
     return if current_user&.admin_role?
 
-    sign_out current_user
-    redirect_to new_user_session_path, alert: "Admin access required."
+    redirect_to after_sign_in_path_for(current_user), alert: "Admin access required."
+  end
+
+  def require_parent!
+    authenticate_user!
+    return if current_user&.parent_role?
+
+    redirect_to after_sign_in_path_for(current_user), alert: "Parent access required."
+  end
+
+  def current_parent_record
+    return nil unless current_user&.parent_role?
+
+    @current_parent_record ||= Parent.find_by(email: current_user.email)
+  end
+  helper_method :current_parent_record
+
+  def impersonating?
+    session[:admin_impersonator_id].present?
+  end
+  helper_method :impersonating?
+
+  def impersonator_user
+    return nil unless impersonating?
+
+    @impersonator_user ||= User.find_by(id: session[:admin_impersonator_id])
+  end
+  helper_method :impersonator_user
+
+  def require_impersonation!
+    return if impersonating?
+
+    redirect_to after_sign_in_path_for(current_user), alert: "Not currently impersonating."
   end
 
   def after_sign_in_path_for(resource)
     return super unless resource.is_a?(User)
 
     return root_path if resource.admin_role?
+    return current_parent_record.present? ? parent_root_path : portal_path if resource.parent_role?
 
-    sign_out resource
-    flash[:alert] = "Admin access required."
-    new_user_session_path
+    portal_path
   end
 end

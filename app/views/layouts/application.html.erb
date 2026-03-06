@@ -23,12 +23,26 @@
       <div class="shell nav-wrap">
         <%= link_to "Wayfinder", root_path, class: "brand" %>
         <nav class="nav-links">
-          <%= link_to "Dashboard", root_path, class: "nav-link" %>
-          <%= link_to "Parents", parents_path, class: "nav-link" %>
-          <%= link_to "Children", children_path, class: "nav-link" %>
-          <%= link_to "Communications", communications_path, class: "nav-link" %>
-          <%= link_to "Users", users_path, class: "nav-link" %>
           <% if user_signed_in? %>
+            <% if current_user.admin_role? %>
+              <%= link_to "Dashboard", root_path, class: "nav-link" %>
+              <%= link_to "Parents", parents_path, class: "nav-link" %>
+              <%= link_to "Children", children_path, class: "nav-link" %>
+              <%= link_to "Communications", communications_path, class: "nav-link" %>
+              <%= link_to "Users", users_path, class: "nav-link" %>
+            <% elsif current_user.parent_role? %>
+              <%= link_to "Dashboard", parent_root_path, class: "nav-link" %>
+              <%= link_to "My Children", parent_children_path, class: "nav-link" %>
+              <%= link_to "Communications", parent_communications_path, class: "nav-link" %>
+            <% else %>
+              <%= link_to "Portal", portal_path, class: "nav-link" %>
+            <% end %>
+
+            <% if impersonating? %>
+              <span class="nav-pill">Impersonating · <%= current_user.email %></span>
+              <%= button_to "Stop Impersonating", stop_impersonating_path, method: :delete, class: "nav-link nav-button" %>
+            <% end %>
+
             <span class="nav-pill"><%= current_user.email %> · <%= current_user.role_label %></span>
             <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "nav-link nav-button" %>
           <% else %>
