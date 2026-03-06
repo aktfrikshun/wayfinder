@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   def current_parent_record
     return nil unless current_user&.parent_role?
 
-    @current_parent_record ||= Parent.find_by(email: current_user.email)
+    @current_parent_record ||= Parent.find_or_create_by!(email: current_user.email)
   end
   helper_method :current_parent_record
 
