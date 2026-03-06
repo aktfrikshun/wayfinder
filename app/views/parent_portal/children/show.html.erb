@@ -16,7 +16,12 @@
     <p><strong>Grade:</strong> <%= @child.grade.presence || "-" %></p>
     <p><strong>School:</strong> <%= @child.school_name.presence || "-" %></p>
     <p><strong>Child Code:</strong> <code><%= @child.inbound_alias.presence || "-" %></code></p>
-    <p><strong>Forward-to Email:</strong> <code><%= @child.inbound_alias.present? ? "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" : "-" %></code></p>
+    <p style="display: flex; align-items: center; gap: 0.5rem;">
+      <span><strong>Forward-to Email:</strong> <code id="child-forward-email"><%= @child.inbound_alias.present? ? "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" : "-" %></code></span>
+      <% if @child.inbound_alias.present? %>
+        <button type="button" class="btn" data-copy-target="#child-forward-email">Copy</button>
+      <% end %>
+    </p>
     <p class="muted" style="margin-top: 0.5rem;">Copy this address on school emails; the child ID suffix routes messages to the right profile.</p>
   </section>
 

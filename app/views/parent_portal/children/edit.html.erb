@@ -20,7 +20,10 @@
 
   <% if @child.inbound_alias.present? %>
     <p><strong>Code:</strong> <code><%= @child.inbound_alias %></code></p>
-    <p><strong>Forward-to email:</strong> <code><%= "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" %></code></p>
+    <p style="display: flex; align-items: center; gap: 0.5rem;">
+      <span><strong>Forward-to email:</strong> <code id="child-forward-email"><%= "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" %></code></span>
+      <button type="button" class="btn" data-copy-target="#child-forward-email">Copy</button>
+    </p>
   <% else %>
     <p class="muted">No code yet. Regenerate to create one.</p>
   <% end %>
@@ -28,6 +31,21 @@
   <p style="margin-top: 0.5rem;" class="muted">
     Any email where this address is on To/CC will be ingested and added to your child's development history. The child ID suffix ensures the message is routed correctly.
   </p>
+
+  <script>
+    document.addEventListener("turbo:load", () => {
+      document.querySelectorAll('[data-copy-target]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = document.querySelector(btn.dataset.copyTarget);
+          if (!target) return;
+          const text = target.textContent.trim();
+          navigator.clipboard?.writeText(text);
+          btn.textContent = "Copied";
+          setTimeout(() => (btn.textContent = "Copy"), 1200);
+        });
+      });
+    });
+  </script>
 </section>
 
 <section class="card" style="margin-top: 1rem;">
