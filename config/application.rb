@@ -34,7 +34,8 @@ module Wayfinder
     # in config/environments, which are processed later.
     #
     config.time_zone = "Eastern Time (US & Canada)"
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :primary } }
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Don't generate system test files.

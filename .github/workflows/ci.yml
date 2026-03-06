@@ -27,7 +27,6 @@ jobs:
     env:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/wayfinder_test
-      REDIS_URL: redis://localhost:6379/0
       POSTMARK_WEBHOOK_SECRET: test-secret
       OPENAI_API_KEY: test-key
 

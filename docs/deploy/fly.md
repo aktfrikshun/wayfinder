@@ -3,10 +3,10 @@
 This guide deploys Wayfinder to Fly with:
 
 - Dockerfile-based Rails deploy
-- Two Fly processes: `web` (Puma) and `worker` (Sidekiq)
+- Two Fly processes: `web` (Puma) and `worker` (Solid Queue)
 - `release_command` for DB migrations
 - Unmanaged Postgres app (`wayfinder-frikshun-db`) on private Fly network
-- Upstash Redis for Sidekiq and ActiveJob
+- No Redis dependency (jobs and cache are database-backed)
 
 ## 1) Prerequisites
 
@@ -47,18 +47,7 @@ Rails should connect using:
 postgres://wayfinder:<password>@wayfinder-frikshun-db.internal:5432/wayfinder_production
 ```
 
-## 4) Provision Redis (Upstash)
-
-Create and attach Upstash Redis to `wayfinder-frikshun`:
-
-```bash
-fly redis create
-fly redis attach <redis-app-name> --app wayfinder-frikshun
-```
-
-After attach, Fly sets `REDIS_URL` secret on `wayfinder-frikshun`.
-
-## 5) Set required app secrets
+## 4) Set required app secrets
 
 Set application secrets (never commit these):
 
@@ -72,7 +61,7 @@ fly secrets set -a wayfinder-frikshun \
 
 You can also set `RAILS_MASTER_KEY` if your app requires encrypted credentials at runtime.
 
-## 6) Deploy
+## 5) Deploy
 
 Use helper script:
 
@@ -86,9 +75,9 @@ The deploy uses:
 - `release_command = bundle exec rails db:migrate`
 - Process groups from `fly.toml`:
   - `web`: `bundle exec puma -C config/puma.rb`
-  - `worker`: `bundle exec sidekiq -C config/sidekiq.yml`
+  - `worker`: `bundle exec rake solid_queue:start`
 
-## 7) Verify
+## 6) Verify
 
 ```bash
 fly status -a wayfinder-frikshun
@@ -102,7 +91,7 @@ Check health endpoint:
 curl -i https://wayfinder-frikshun.fly.dev/up
 ```
 
-## 8) Git workflow
+## 7) Git workflow
 
 Typical local workflow:
 
@@ -116,22 +105,5 @@ GitHub Actions deploy is optional. Local deploy is fully supported by this setup
 ## Notes
 
 - `config/database.yml` production uses `DATABASE_URL`.
-- Sidekiq uses `REDIS_URL` via `config/initializers/sidekiq.rb`.
-
-### Redis fallback (self-hosted on Fly)
-
-Use this only if Upstash is not available:
-
-```bash
-fly apps create wayfinder-frikshun-redis
-fly machine run redis:7 \
-  -a wayfinder-frikshun-redis \
-  --name wayfinder-frikshun-redis-1 \
-  --restart always \
-  --vm-size shared-cpu-1x \
-  --vm-memory 256
-
-fly secrets set -a wayfinder-frikshun REDIS_URL='redis://wayfinder-frikshun-redis.internal:6379/0'
-```
-
-Upstash remains the default/recommended option.
+- Active Job uses `solid_queue` (database-backed) from `config/application.rb`.
+- Rails cache uses `solid_cache_store` in development and production.

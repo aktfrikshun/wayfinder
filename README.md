@@ -9,7 +9,7 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 1. Postmark sends inbound email payload to `POST /webhooks/postmark/inbound`.
 2. The webhook validates `X-Postmark-Webhook-Token` against `POSTMARK_WEBHOOK_SECRET`.
 3. Wayfinder resolves the child from the inbound alias (email local-part), stores a `Communication`, and enqueues AI extraction.
-4. Sidekiq runs `AI::ExtractCommunicationJob` from the `ai_extract` queue.
+4. Solid Queue worker runs `AI::ExtractCommunicationJob` from the `ai_extract` queue.
 5. `AI::ExtractSchoolEmail` calls `OpenAIClient` and writes structured extraction to `communications.ai_extracted`.
 6. Clients fetch timeline entries from `GET /children/:id/communications` (latest 50).
 
@@ -34,7 +34,8 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 - Ruby 3.x managed with `rbenv`
 - Rails 8.x
 - PostgreSQL
-- Sidekiq + Redis
+- Solid Queue (database-backed jobs)
+- Solid Cache (database-backed Rails cache store)
 - OpenAI API (via Faraday)
 - RSpec + FactoryBot
 
@@ -43,17 +44,14 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 - `rbenv` with Ruby from `.ruby-version`
 - Docker with Docker Compose
 
-Start Postgres and Redis via Docker:
+Start Postgres via Docker:
 
 ```bash
 docker compose up -d
 docker compose ps
 ```
 
-This exposes:
-
-- PostgreSQL on `localhost:5432`
-- Redis on `localhost:6379`
+This exposes PostgreSQL on `localhost:5432`.
 
 ## Configuration
 
@@ -66,7 +64,6 @@ cp .env.example .env
 Important variables:
 
 - `DATABASE_URL=postgres://postgres:postgres@localhost:5432/wayfinder_development`
-- `REDIS_URL=redis://localhost:6379/0`
 - `OPENAI_API_KEY=...`
 - `OPENAI_MODEL=gpt-4.1-mini`
 - `POSTMARK_WEBHOOK_SECRET=...`
@@ -95,7 +92,7 @@ bin/dev
 This launches:
 
 - Rails server on `http://localhost:3000`
-- Sidekiq worker using `config/sidekiq.yml`
+- Solid Queue worker (`bundle exec rake solid_queue:start`)
 
 Stop data services when done:
 

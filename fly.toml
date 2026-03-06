@@ -14,7 +14,7 @@ primary_region = "iad"
 
 [processes]
   web = "bundle exec puma -C config/puma.rb"
-  worker = "bundle exec sidekiq -C config/sidekiq.yml"
+  worker = "bundle exec rake solid_queue:start"
 
 [http_service]
   internal_port = 8080
