@@ -23,7 +23,7 @@ RSpec.describe "Admin access", type: :request do
     protected_paths.each do |path|
       sign_in(create(:user, role: :parent))
       get path
-      expect(response).to redirect_to(portal_path)
+      expect(response).to redirect_to(parent_root_path)
       expect(flash[:alert]).to eq("Admin access required.")
     end
   end
