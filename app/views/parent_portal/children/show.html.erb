@@ -16,8 +16,8 @@
     <p><strong>Grade:</strong> <%= @child.grade.presence || "-" %></p>
     <p><strong>School:</strong> <%= @child.school_name.presence || "-" %></p>
     <p><strong>Child Code:</strong> <code><%= @child.inbound_alias.presence || "-" %></code></p>
-    <p><strong>Forward-to Email:</strong> <code><%= @child.inbound_alias.present? ? "#{@child.inbound_alias}@wf.frikshun.com" : "-" %></code></p>
-    <p class="muted" style="margin-top: 0.5rem;">Copy this address on school emails to add them to the timeline.</p>
+    <p><strong>Forward-to Email:</strong> <code><%= @child.inbound_alias.present? ? "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" : "-" %></code></p>
+    <p class="muted" style="margin-top: 0.5rem;">Copy this address on school emails; the child ID suffix routes messages to the right profile.</p>
   </section>
 
   <section class="card">

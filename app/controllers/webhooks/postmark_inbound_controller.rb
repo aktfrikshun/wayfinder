@@ -7,7 +7,7 @@ module Webhooks
 
       payload = parsed_payload
       inbound_email = extract_inbound_email(payload)
-      child = Child.find_by(inbound_alias: inbound_alias_from_email(inbound_email))
+      child = find_child_from_email(inbound_email)
 
       return render json: { status: "ignored" }, status: :not_found unless child
 
@@ -92,10 +92,18 @@ module Webhooks
       payload["OriginalRecipient"] || payload["To"] || ""
     end
 
-    def inbound_alias_from_email(email)
+    def find_child_from_email(email)
       return nil if email.blank?
 
-      email.to_s.split("@").first
+      local = email.to_s.split("@").first
+      parts = local.to_s.split("-")
+
+      if parts.size >= 2 && parts.last.to_i.positive?
+        child = Child.find_by(id: parts.last.to_i)
+        return child if child.present?
+      end
+
+      Child.find_by(inbound_alias: local)
     end
 
     def parsed_payload

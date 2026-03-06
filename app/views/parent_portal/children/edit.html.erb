@@ -20,13 +20,13 @@
 
   <% if @child.inbound_alias.present? %>
     <p><strong>Code:</strong> <code><%= @child.inbound_alias %></code></p>
-    <p><strong>Forward-to email:</strong> <code><%= "#{@child.inbound_alias}@wf.frikshun.com" %></code></p>
+    <p><strong>Forward-to email:</strong> <code><%= "#{@child.inbound_alias}-#{@child.id}@wf.frikshun.com" %></code></p>
   <% else %>
     <p class="muted">No code yet. Regenerate to create one.</p>
   <% end %>
 
   <p style="margin-top: 0.5rem;" class="muted">
-    Any email where this address is on To/CC will be ingested and added to your child's development history.
+    Any email where this address is on To/CC will be ingested and added to your child's development history. The child ID suffix ensures the message is routed correctly.
   </p>
 </section>
 
