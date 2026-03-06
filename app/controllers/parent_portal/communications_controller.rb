@@ -1,21 +1,21 @@
 module ParentPortal
   class CommunicationsController < BaseController
-    before_action :set_communication, only: :show
+    before_action :set_artifact, only: :show
 
     def index
       @query = params[:q].to_s.strip
       @child_id = params[:child_id].presence
 
-      @communications = Communication.joins(:child)
+      @artifacts = Artifact.joins(:child)
         .includes(:child)
         .where(children: { parent_id: @parent.id })
-        .order(received_at: :desc)
+        .recent_first
 
-      @communications = @communications.where(child_id: @child_id) if @child_id.present?
+      @artifacts = @artifacts.where(child_id: @child_id) if @child_id.present?
       return if @query.blank?
 
-      @communications = @communications.where(
-        "communications.subject ILIKE :q OR communications.from_email ILIKE :q OR communications.from_name ILIKE :q OR communications.ai_status ILIKE :q OR children.name ILIKE :q",
+      @artifacts = @artifacts.where(
+        "artifacts.subject ILIKE :q OR artifacts.from_email ILIKE :q OR artifacts.from_name ILIKE :q OR artifacts.ai_status ILIKE :q OR children.name ILIKE :q",
         q: "%#{@query}%"
       )
     end
@@ -24,8 +24,8 @@ module ParentPortal
 
     private
 
-    def set_communication
-      @communication = Communication.joins(:child)
+    def set_artifact
+      @artifact = Artifact.joins(:child)
         .includes(:child)
         .where(children: { parent_id: @parent.id })
         .find(params[:id])

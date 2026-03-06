@@ -16,11 +16,11 @@
   </section>
   <section class="card">
     <h3>Communications</h3>
-    <div class="metric"><%= @communications_count %></div>
+    <div class="metric"><%= @artifacts_count %></div>
   </section>
   <section class="card">
     <h3>Latest Activity</h3>
-    <p class="muted" style="margin-top: 0.5rem;"><%= @recent_communications.first&.received_at&.strftime("%Y-%m-%d %H:%M") || "No messages yet" %></p>
+    <p class="muted" style="margin-top: 0.5rem;"><%= @recent_artifacts.first&.occurred_at&.strftime("%Y-%m-%d %H:%M") || @recent_artifacts.first&.captured_at&.strftime("%Y-%m-%d %H:%M") || "No messages yet" %></p>
   </section>
 </div>
 

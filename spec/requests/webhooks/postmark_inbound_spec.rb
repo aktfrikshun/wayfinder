@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Postmark inbound webhook", type: :request do
   before { clear_enqueued_jobs }
 
-  it "creates communication and enqueues extraction" do
+  it "creates artifact and enqueues processing job" do
     alias_name = "alias#{SecureRandom.hex(4)}"
     child = create(:child, inbound_alias: alias_name)
 
@@ -22,10 +22,13 @@ RSpec.describe "Postmark inbound webhook", type: :request do
              "CONTENT_TYPE" => "application/json",
              "X-Postmark-Webhook-Token" => "secret"
            }
-    end.to have_enqueued_job(AI::ExtractCommunicationJob)
+    end.to have_enqueued_job(Artifacts::ProcessArtifactJob)
 
     expect(response).to have_http_status(:ok)
-    expect(child.communications.count).to eq(1)
+    expect(child.artifacts.count).to eq(1)
+    artifact = child.artifacts.last
+    expect(artifact.source_type).to eq("email")
+    expect(artifact.content_type).to eq("message")
   end
 
   it "returns unauthorized for invalid token" do

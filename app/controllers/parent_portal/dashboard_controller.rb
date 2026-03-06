@@ -2,11 +2,11 @@ module ParentPortal
   class DashboardController < BaseController
     def index
       @children = @parent.children.order(:name)
-      @communications_count = Communication.joins(:child).where(children: { parent_id: @parent.id }).count
-      @recent_communications = Communication.joins(:child)
+      @artifacts_count = Artifact.joins(:child).where(children: { parent_id: @parent.id }).count
+      @recent_artifacts = Artifact.joins(:child)
         .includes(:child)
         .where(children: { parent_id: @parent.id })
-        .order(received_at: :desc)
+        .recent_first
         .limit(10)
     end
   end

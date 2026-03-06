@@ -1,7 +1,7 @@
 <div class="page-head">
   <div>
-    <h1><%= @communication.subject.presence || "(No Subject)" %></h1>
-    <p><%= @communication.child.name %> · <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
+    <h1><%= @artifact.display_title %></h1>
+    <p><%= @artifact.child.name %> · <%= @artifact.occurred_at&.strftime("%Y-%m-%d %H:%M") || @artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
   </div>
   <div class="inline-actions">
     <%= link_to "Back", parent_communications_path, class: "btn" %>
@@ -11,15 +11,16 @@
 <div class="grid grid-2">
   <section class="card">
     <h3>Message Details</h3>
-    <p><strong>From:</strong> <%= @communication.from_name.presence || "-" %> &lt;<%= @communication.from_email.presence || "-" %>&gt;</p>
-    <p><strong>Status:</strong> <span class="badge badge-<%= @communication.ai_status %>"><%= @communication.ai_status %></span></p>
-    <p><strong>Source:</strong> <%= @communication.source.presence || "-" %></p>
+    <p><strong>From:</strong> <%= @artifact.from_name.presence || "-" %> &lt;<%= @artifact.from_email.presence || "-" %>&gt;</p>
+    <p><strong>Status:</strong> <span class="badge badge-<%= @artifact.ai_status %>"><%= @artifact.ai_status %></span></p>
+    <p><strong>Source:</strong> <%= @artifact.source.presence || "-" %></p>
+    <p><strong>Category:</strong> <%= @artifact.effective_category.presence || "-" %></p>
   </section>
 
   <section class="card">
     <h3>AI Summary</h3>
-    <% if @communication.ai_extracted.present? %>
-      <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@communication.ai_extracted) %></pre>
+    <% if @artifact.extracted_payload.present? %>
+      <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@artifact.extracted_payload) %></pre>
     <% else %>
       <p class="muted">No AI extraction available yet.</p>
     <% end %>
@@ -28,5 +29,5 @@
 
 <section class="card" style="margin-top: 1rem;">
   <h3>Body</h3>
-  <p style="white-space: pre-wrap;"><%= @communication.body_text.presence || "No text body" %></p>
+  <p style="white-space: pre-wrap;"><%= @artifact.normalized_text.presence || @artifact.body_text.presence || "No text body" %></p>
 </section>

@@ -1,5 +1,5 @@
 module Api
-  class ChildrenCommunicationsController < ApplicationController
+  class ChildrenArtifactsController < ApplicationController
     def index
       child = Child.find(params[:id])
       artifacts = child.artifacts.recent_first.limit(50)

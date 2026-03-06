@@ -1,6 +1,7 @@
 class Child < ApplicationRecord
   belongs_to :parent
   has_many :communications, dependent: :destroy
+  has_many :artifacts, dependent: :destroy
 
   validates :name, presence: true
   validates :inbound_alias, uniqueness: true, allow_nil: true

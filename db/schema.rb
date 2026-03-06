@@ -10,9 +10,53 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_170500) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "artifacts", force: :cascade do |t|
+    t.text "ai_error"
+    t.jsonb "ai_raw_response", default: {}, null: false
+    t.string "ai_status", default: "pending", null: false
+    t.text "body_html"
+    t.text "body_text"
+    t.datetime "captured_at", null: false
+    t.float "category_confidence"
+    t.bigint "child_id", null: false
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "extracted_payload", default: {}, null: false
+    t.string "from_email"
+    t.string "from_name"
+    t.jsonb "metadata", default: {}, null: false
+    t.text "normalized_text"
+    t.datetime "occurred_at"
+    t.text "ocr_text"
+    t.string "processing_state", default: "pending", null: false
+    t.text "raw_extracted_text"
+    t.jsonb "raw_payload", default: {}, null: false
+    t.string "source"
+    t.string "source_type", null: false
+    t.string "subject"
+    t.string "system_category"
+    t.jsonb "tags", default: [], null: false
+    t.string "text_extraction_method"
+    t.float "text_quality_score"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.string "user_category"
+    t.index ["ai_status"], name: "index_artifacts_on_ai_status"
+    t.index ["captured_at"], name: "index_artifacts_on_captured_at"
+    t.index ["child_id"], name: "index_artifacts_on_child_id"
+    t.index ["content_type"], name: "index_artifacts_on_content_type"
+    t.index ["extracted_payload"], name: "index_artifacts_on_extracted_payload", using: :gin
+    t.index ["metadata"], name: "index_artifacts_on_metadata", using: :gin
+    t.index ["occurred_at"], name: "index_artifacts_on_occurred_at"
+    t.index ["processing_state"], name: "index_artifacts_on_processing_state"
+    t.index ["source_type"], name: "index_artifacts_on_source_type"
+    t.index ["system_category"], name: "index_artifacts_on_system_category"
+    t.index ["tags"], name: "index_artifacts_on_tags", using: :gin
+  end
 
   create_table "children", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -201,6 +245,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_170500) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "artifacts", "children"
   add_foreign_key "children", "parents"
   add_foreign_key "communications", "children"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

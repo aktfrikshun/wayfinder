@@ -29,21 +29,21 @@
   <table class="table">
     <thead>
       <tr>
-        <th>Subject</th>
+        <th>Title</th>
         <th>Child</th>
         <th>From</th>
         <th>Status</th>
-        <th>Received</th>
+        <th>Captured</th>
       </tr>
     </thead>
     <tbody>
-      <% @communications.each do |communication| %>
+      <% @artifacts.each do |artifact| %>
         <tr>
-          <td><%= link_to(communication.subject.presence || "(No Subject)", parent_communication_path(communication)) %></td>
-          <td><%= communication.child.name %></td>
-          <td><%= communication.from_email.presence || "-" %></td>
-          <td><span class="badge badge-<%= communication.ai_status %>"><%= communication.ai_status %></span></td>
-          <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          <td><%= link_to(artifact.display_title, parent_communication_path(artifact)) %></td>
+          <td><%= artifact.child.name %></td>
+          <td><%= artifact.from_email.presence || "-" %></td>
+          <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
+          <td><%= artifact.occurred_at&.strftime("%Y-%m-%d %H:%M") || artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
         </tr>
       <% end %>
     </tbody>

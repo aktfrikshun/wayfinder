@@ -1,6 +1,6 @@
 # Wayfinder
 
-Wayfinder is a Rails 8 application that ingests school communications, extracts structured signals with AI, and exposes a child communication timeline for parent-facing experiences.
+Wayfinder is a Rails 8 application that ingests family/school artifacts, runs extraction + classification, and exposes a child artifact timeline for parent-facing experiences.
 
 ## Architecture
 
@@ -8,26 +8,28 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 
 1. Postmark sends inbound email payload to `POST /webhooks/postmark/inbound`.
 2. The webhook validates `X-Postmark-Webhook-Token` against `POSTMARK_WEBHOOK_SECRET`.
-3. Wayfinder resolves the child from the inbound alias (email local-part), stores a `Communication`, and enqueues AI extraction.
+3. Wayfinder resolves the child from the inbound alias (email local-part), stores an `Artifact`, and enqueues processing.
 4. In production lean mode, Active Job runs asynchronously in-process (`:async`) without a dedicated worker machine.
-5. `AI::ExtractSchoolEmail` calls `OpenAIClient` and writes structured extraction to `communications.ai_extracted`.
-6. Clients fetch timeline entries from `GET /children/:id/communications` (latest 50).
+5. `Artifacts::ProcessArtifactJob` orchestrates shape detection, extraction, OCR fallback, classification, and AI extraction.
+6. Clients fetch timeline entries from `GET /children/:id/artifacts` (latest 50).
 
 ### Core components
 
 - Webhook controller: `app/controllers/webhooks/postmark_inbound_controller.rb`
-- Timeline API: `app/controllers/communications_controller.rb`
-- Background job: `app/jobs/ai/extract_communication_job.rb`
-- AI extraction service: `app/services/ai/extract_school_email.rb`
+- Artifact timeline API: `app/controllers/api/children_artifacts_controller.rb`
+- Background job: `app/jobs/artifacts/process_artifact_job.rb`
+- Artifact pipeline services: `app/services/artifacts/*`
+- AI extraction dispatcher: `app/services/ai/extract_artifact.rb`
 - OpenAI wrapper: `app/services/open_ai_client.rb`
-- Serializer: `app/serializers/communication_serializer.rb`
+- Serializer: `app/serializers/artifact_serializer.rb`
 
 ### Data model
 
 - `Parent` has many `children`
-- `Child` belongs to `parent`, has many `communications`
-- `Communication` belongs to `child`
-- `Communication.ai_status` values: `pending`, `processing`, `complete`, `failed`
+- `Child` belongs to `parent`, has many `artifacts` (legacy `communications` retained for migration compatibility)
+- `Artifact` belongs to `child`
+- `Artifact.processing_state` values: `pending`, `detecting`, `extracting_text`, `classifying`, `processed`, `failed`
+- `Artifact.ai_status` values: `pending`, `processing`, `complete`, `failed`
 
 ## Tech stack
 
@@ -119,19 +121,26 @@ Creates:
 POSTMARK_WEBHOOK_SECRET=changeme ./scripts/test_webhook.sh
 ```
 
-### Query child communications timeline
+### Query child artifacts timeline
 
 ```bash
-curl -s http://localhost:3000/children/1/communications | jq .
+curl -s http://localhost:3000/children/1/artifacts | jq .
 ```
 
 Response fields:
 
 - `id`
+- `source_type`
+- `content_type`
+- `title`
 - `subject`
-- `received_at`
+- `occurred_at`
+- `captured_at`
+- `processing_state`
 - `ai_status`
-- `ai_extracted.summary`
+- `effective_category`
+- `tags`
+- `summary`
 
 ## Testing
 
@@ -168,5 +177,5 @@ Fly deployment assets are included:
 ## Security notes
 
 - Webhook token is validated before ingestion.
-- Raw payload is stored for auditing in `communications.raw_payload`.
+- Raw payload is stored for auditing in `artifacts.raw_payload`.
 - Sensitive email body and payload fields are filtered from logs via `config/initializers/filter_parameter_logging.rb`.

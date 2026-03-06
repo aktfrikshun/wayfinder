@@ -11,19 +11,24 @@ module Webhooks
 
       return render json: { status: "ignored" }, status: :not_found unless child
 
-      communication = child.communications.create!(
+      artifact = child.artifacts.create!(
+        source_type: "email",
+        content_type: "message",
+        title: payload["Subject"].presence || "School Email",
         source: "postmark",
         from_email: payload["From"],
         from_name: payload["FromName"],
         subject: payload["Subject"],
-        received_at: payload["Date"] || Time.current,
+        occurred_at: payload["Date"] || Time.current,
+        captured_at: Time.current,
         body_text: payload["TextBody"],
         body_html: payload["HtmlBody"],
         raw_payload: payload,
+        processing_state: "pending",
         ai_status: "pending"
       )
 
-      AI::ExtractCommunicationJob.perform_later(communication.id)
+      Artifacts::ProcessArtifactJob.perform_later(artifact.id)
 
       render json: { status: "ok" }
     rescue JSON::ParserError

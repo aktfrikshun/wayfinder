@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   delete "impersonation", to: "impersonations#destroy", as: :stop_impersonating
 
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
+  get "children/:id/artifacts", to: "api/children_artifacts#index"
   get "children/:id/communications", to: "api/children_communications#index"
 
   scope module: :parent_portal, path: "parent", as: :parent do

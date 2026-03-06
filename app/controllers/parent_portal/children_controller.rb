@@ -14,7 +14,7 @@ module ParentPortal
     end
 
     def show
-      @recent_communications = @child.communications.order(received_at: :desc).limit(10)
+      @recent_artifacts = @child.artifacts.recent_first.limit(10)
     end
 
     def new
