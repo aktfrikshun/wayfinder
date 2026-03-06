@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_222000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_230100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -164,6 +164,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_222000) do
     t.index ["family_id"], name: "index_parents_on_family_id"
   end
 
+  create_table "postmark_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.string "message_id"
+    t.jsonb "payload", default: {}, null: false
+    t.string "recipient"
+    t.datetime "recorded_at"
+    t.datetime "updated_at", null: false
+    t.index ["event_type"], name: "index_postmark_events_on_event_type"
+    t.index ["message_id"], name: "index_postmark_events_on_message_id"
+    t.index ["recorded_at"], name: "index_postmark_events_on_recorded_at"
+  end
+
   create_table "solid_cache_entries", force: :cascade do |t|
     t.integer "byte_size", null: false
     t.datetime "created_at", null: false
@@ -300,12 +313,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_222000) do
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.bigint "invited_by_id"
+    t.boolean "must_change_password", default: false, null: false
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.string "role", default: "PARENT", null: false
+    t.datetime "temporary_password_sent_at"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -326,4 +343,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_222000) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "users", "users", column: "invited_by_id"
 end

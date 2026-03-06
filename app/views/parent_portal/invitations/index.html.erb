@@ -1,0 +1,39 @@
+<div class="page-head">
+  <div>
+    <h1>Family Invitations</h1>
+    <p>Invite parents, teachers, children, and relatives to your family workspace.</p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Send Invite", new_parent_invitation_path, class: "btn btn-primary" %>
+    <%= link_to "Back to Dashboard", parent_root_path, class: "btn" %>
+  </div>
+</div>
+
+<section class="card">
+  <h3>Current Family Users</h3>
+
+  <% if @family_users.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Password Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @family_users.each do |user| %>
+            <tr>
+              <td><%= user.email %></td>
+              <td><%= user.role_label %></td>
+              <td><%= user.must_change_password? ? "Must change temp password" : "Active" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No invited users yet.</p>
+  <% end %>
+</section>

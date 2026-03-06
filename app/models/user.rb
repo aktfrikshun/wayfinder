@@ -3,7 +3,8 @@ class User < ApplicationRecord
     admin: "ADMIN",
     parent: "PARENT",
     child: "CHILD",
-    teacher: "TEACHER"
+    teacher: "TEACHER",
+    relative: "RELATIVE"
   }.freeze
 
   # Include default devise modules. Others available are:
@@ -12,6 +13,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   enum :role, ROLES, suffix: true
+  belongs_to :invited_by, class_name: "User", optional: true
+  has_many :invited_users, class_name: "User", foreign_key: :invited_by_id, dependent: :nullify
   has_one :contact, class_name: "Contact", dependent: :destroy
   alias_method :correspondent, :contact
 
@@ -45,13 +48,21 @@ class User < ApplicationRecord
     return if email.blank?
 
     parent_profile = Parent.find_by(email: email)
+    inviter_family = invited_by&.correspondent&.family
     fallback_family = Family.find_or_create_by!(name: "User #{id || email} Family")
 
     record = correspondent || build_contact
-    record.family ||= parent_profile&.family || fallback_family
+    record.family ||= parent_profile&.family || inviter_family || fallback_family
 
     record.email = email
     record.name = email if record.name.blank?
     record.save! if record.new_record? || record.changed?
+
+    return unless parent_role?
+
+    parent = Parent.find_or_initialize_by(email: email)
+    parent.family ||= record.family
+    parent.name ||= record.name
+    parent.save! if parent.new_record? || parent.changed?
   end
 end

@@ -22,6 +22,9 @@ Wayfinder is a Rails 8 application that ingests family/school artifacts, runs ex
 - AI extraction dispatcher: `app/services/ai/extract_artifact.rb`
 - OpenAI wrapper: `app/services/open_ai_client.rb`
 - Serializer: `app/serializers/artifact_serializer.rb`
+- Parent invites: `app/controllers/parent_portal/invitations_controller.rb`
+- Invitation mailer: `app/mailers/invitation_mailer.rb`
+- Postmark events webhook: `app/controllers/webhooks/postmark_events_controller.rb`
 
 ### Data model
 
@@ -69,6 +72,10 @@ Important variables:
 - `OPENAI_API_KEY=...`
 - `OPENAI_MODEL=gpt-4.1-mini`
 - `POSTMARK_WEBHOOK_SECRET=...`
+- `POSTMARK_EVENTS_WEBHOOK_SECRET=...`
+- `POSTMARK_API_TOKEN=...`
+- `POSTMARK_MESSAGE_STREAM=outbound`
+- `MAIL_FROM=wayfinder@frikshun.com`
 
 ## Setup
 
@@ -173,6 +180,7 @@ Fly deployment assets are included:
 - `bin/fly/setup_db` (unmanaged Postgres app setup)
 - `bin/fly/deploy` (deploy helper with Depot layer cache, scales to web=1/worker=0)
 - `docs/deploy/fly.md` (full runbook)
+- `docs/deploy/postmark.md` (Postmark send + webhook setup)
 
 ## Security notes
 

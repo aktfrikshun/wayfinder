@@ -22,8 +22,10 @@ Rails.application.routes.draw do
   delete "impersonation", to: "impersonations#destroy", as: :stop_impersonating
 
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
+  post "webhooks/postmark/events", to: "webhooks/postmark_events#create"
   get "children/:id/artifacts", to: "api/children_artifacts#index"
   get "children/:id/communications", to: "api/children_communications#index"
+  resource :password_change, only: %i[edit update]
 
   scope module: :profiles, path: "profile", as: :profile do
     resource :correspondent, only: %i[edit update]
@@ -31,6 +33,7 @@ Rails.application.routes.draw do
 
   scope module: :parent_portal, path: "parent", as: :parent do
     root "dashboard#index"
+    resources :invitations, only: %i[index new create]
     resources :children do
       resources :communications, controller: "child_communications", except: :index do
         post :artifacts, action: :create_artifact, on: :member

@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+  before_action :enforce_password_change!
 
   protected
 
@@ -48,10 +49,20 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
     return super unless resource.is_a?(User)
+    return edit_password_change_path if resource.must_change_password?
 
     return root_path if resource.admin_role?
     return current_parent_record.present? ? parent_root_path : portal_path if resource.parent_role?
 
     portal_path
+  end
+
+  def enforce_password_change!
+    return unless user_signed_in?
+    return unless current_user.must_change_password?
+    return if controller_path == "password_changes"
+    return if devise_controller? && action_name == "destroy"
+
+    redirect_to edit_password_change_path, alert: "Please update your temporary password before continuing."
   end
 end

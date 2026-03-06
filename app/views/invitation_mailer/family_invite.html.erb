@@ -1,0 +1,17 @@
+<p>Hello,</p>
+
+<p><strong><%= @inviter_name %></strong> invited you to join their family workspace in <strong>Wayfinder</strong> as a <strong><%= @role_label %></strong>.</p>
+
+<p>Wayfinder helps families and educators organize school communications, uploads, and artifacts in one place.</p>
+
+<p><strong>Temporary login details</strong></p>
+<ul>
+  <li>Email: <%= params[:email] %></li>
+  <li>Temporary password: <code><%= @temporary_password %></code></li>
+</ul>
+
+<p>
+  <%= link_to "Sign in to Wayfinder", @login_url %>
+</p>
+
+<p>For security, you will be required to change this temporary password immediately after signing in.</p>

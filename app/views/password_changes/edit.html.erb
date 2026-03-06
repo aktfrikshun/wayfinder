@@ -1,0 +1,37 @@
+<div class="page-head">
+  <div>
+    <h1>Update Your Password</h1>
+    <p>You must change your temporary password before accessing your dashboard.</p>
+  </div>
+</div>
+
+<section class="card" style="max-width: 40rem;">
+  <%= form_with model: current_user, url: password_change_path, method: :patch, local: true do |form| %>
+    <% if current_user.errors.any? %>
+      <div class="error-box">
+        <strong><%= pluralize(current_user.errors.count, "error") %> prevented save:</strong>
+        <ul>
+          <% current_user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-grid">
+      <div>
+        <%= form.label :password, "New password" %>
+        <%= form.password_field :password, autocomplete: "new-password", required: true %>
+      </div>
+
+      <div>
+        <%= form.label :password_confirmation, "Confirm new password" %>
+        <%= form.password_field :password_confirmation, autocomplete: "new-password", required: true %>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top: 1rem;">
+      <%= form.submit "Save Password", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>

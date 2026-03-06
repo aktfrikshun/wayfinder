@@ -1,0 +1,35 @@
+<div class="page-head">
+  <div>
+    <h1>Invite Family Member</h1>
+    <p>We will create the account, send a temporary password, and require password update on first login.</p>
+  </div>
+  <%= link_to "Back to Invites", parent_invitations_path, class: "btn" %>
+</div>
+
+<section class="card" style="max-width: 42rem;">
+  <%= form_with url: parent_invitations_path, method: :post, scope: :invite, local: true do |form| %>
+    <div class="form-grid">
+      <div>
+        <%= form.label :name, "Full name" %>
+        <%= form.text_field :name, value: @invite[:name], placeholder: "Jamie Teacher" %>
+      </div>
+
+      <div>
+        <%= form.label :email %>
+        <%= form.email_field :email, value: @invite[:email], required: true, placeholder: "person@example.com" %>
+      </div>
+
+      <div>
+        <%= form.label :role %>
+        <%= form.select :role,
+                        [["Parent", "parent"], ["Teacher", "teacher"], ["Child", "child"], ["Relative", "relative"]],
+                        { selected: @invite[:role] },
+                        required: true %>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top: 1rem;">
+      <%= form.submit "Send Invitation", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>

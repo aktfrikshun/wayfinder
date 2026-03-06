@@ -16,5 +16,9 @@ FactoryBot.define do
     trait :teacher do
       role { :teacher }
     end
+
+    trait :relative do
+      role { :relative }
+    end
   end
 end
