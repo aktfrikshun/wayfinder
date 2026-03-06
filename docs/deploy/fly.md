@@ -3,10 +3,11 @@
 This guide deploys Wayfinder to Fly with:
 
 - Dockerfile-based Rails deploy
-- Two Fly processes: `web` (Puma) and `worker` (Solid Queue)
+- One Fly process: `web` (Puma)
 - `release_command` for DB migrations
 - Unmanaged Postgres app (`wayfinder-frikshun-db`) on private Fly network
 - No Redis dependency (jobs and cache are database-backed)
+- Lean mode: Active Job runs `:async` in-process (no dedicated worker machine)
 
 ## 1) Prerequisites
 
@@ -76,7 +77,7 @@ The deploy uses:
 - `release_command = bundle exec rails db:migrate`
 - Process groups from `fly.toml`:
   - `web`: `bundle exec puma -C config/puma.rb`
-  - `worker`: `bundle exec rake solid_queue:start`
+- Post-deploy scale target from `bin/fly/deploy`: `web=1 worker=0`
 
 You can override cache scope if needed:
 
@@ -112,5 +113,5 @@ GitHub Actions deploy is optional. Local deploy is fully supported by this setup
 ## Notes
 
 - `config/database.yml` production uses `DATABASE_URL`.
-- Active Job uses `solid_queue` (database-backed) from `config/application.rb`.
-- Rails cache uses `solid_cache_store` in development and production.
+- Active Job uses `:async` in production (`config/environments/production.rb`).
+- Rails cache uses `:memory_store` in production and `solid_cache_store` in development.

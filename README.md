@@ -9,7 +9,7 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 1. Postmark sends inbound email payload to `POST /webhooks/postmark/inbound`.
 2. The webhook validates `X-Postmark-Webhook-Token` against `POSTMARK_WEBHOOK_SECRET`.
 3. Wayfinder resolves the child from the inbound alias (email local-part), stores a `Communication`, and enqueues AI extraction.
-4. Solid Queue worker runs `AI::ExtractCommunicationJob` from the `ai_extract` queue.
+4. In production lean mode, Active Job runs asynchronously in-process (`:async`) without a dedicated worker machine.
 5. `AI::ExtractSchoolEmail` calls `OpenAIClient` and writes structured extraction to `communications.ai_extracted`.
 6. Clients fetch timeline entries from `GET /children/:id/communications` (latest 50).
 
@@ -34,7 +34,7 @@ Wayfinder is a Rails 8 application that ingests school communications, extracts 
 - Ruby 3.x managed with `rbenv`
 - Rails 8.x
 - PostgreSQL
-- Solid Queue (database-backed jobs)
+- Active Job (`:async` in production lean mode)
 - Solid Cache (database-backed Rails cache store)
 - OpenAI API (via Faraday)
 - RSpec + FactoryBot
@@ -157,9 +157,9 @@ Pipeline runs:
 
 Fly deployment assets are included:
 
-- `fly.toml` (web + worker processes, release migration command)
+- `fly.toml` (web process, release migration command)
 - `bin/fly/setup_db` (unmanaged Postgres app setup)
-- `bin/fly/deploy` (deploy helper with Depot layer cache)
+- `bin/fly/deploy` (deploy helper with Depot layer cache, scales to web=1/worker=0)
 - `docs/deploy/fly.md` (full runbook)
 
 ## Security notes

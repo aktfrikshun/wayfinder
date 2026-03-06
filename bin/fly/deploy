@@ -22,5 +22,5 @@ fly deploy \
   --remote-only \
   "$@"
 
-echo "==> Ensuring one machine for each process group"
-fly scale count -a "${APP}" web=1 worker=1 --yes
+echo "==> Ensuring lean runtime footprint (web=1)"
+fly scale count -a "${APP}" web=1 --yes
