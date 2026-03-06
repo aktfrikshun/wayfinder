@@ -11,7 +11,7 @@ module Webhooks
 
       return render json: { status: "ignored" }, status: :not_found unless child
 
-      correspondent = find_or_create_correspondent(payload)
+      correspondent = find_or_create_correspondent(payload, child)
       communication = child.communications.create!(
         source: "postmark",
         from_email: payload["From"],
@@ -88,12 +88,13 @@ module Webhooks
       params_hash.presence || JSON.parse(request.raw_post)
     end
 
-    def find_or_create_correspondent(payload)
+    def find_or_create_correspondent(payload, child)
       email = payload["From"].to_s.downcase.presence
       user = email.present? ? User.find_by(email: email) : nil
 
       Correspondent.find_or_create_by!(email: email, user: user) do |record|
         record.name = payload["FromName"].presence || email
+        record.family = child.parent.family
       end
     end
   end

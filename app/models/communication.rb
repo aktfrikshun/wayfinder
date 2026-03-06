@@ -16,9 +16,10 @@ class Communication < ApplicationRecord
     return if correspondents.any?
     return if from_email.blank?
 
-    default = Correspondent.find_or_create_by(email: from_email.downcase) do |record|
-      record.name = from_name.presence || from_email
-    end
+    default = Correspondent.find_or_initialize_by(email: from_email.downcase)
+    default.name = from_name.presence || from_email if default.name.blank?
+    default.family ||= child.parent.family if child&.parent&.family.present?
+    default.save! if default.new_record? || default.changed?
     correspondents << default
   end
 
