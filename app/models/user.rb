@@ -23,6 +23,18 @@ class User < ApplicationRecord
     ROLES.fetch(role.to_sym)
   end
 
+  def build_correspondent(attributes = {})
+    build_contact(attributes)
+  end
+
+  def create_correspondent(attributes = {})
+    create_contact(attributes)
+  end
+
+  def create_correspondent!(attributes = {})
+    create_contact!(attributes)
+  end
+
   private
 
   def assign_default_role

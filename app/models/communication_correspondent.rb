@@ -1,0 +1,2 @@
+class CommunicationCorrespondent < CommunicationContact
+end

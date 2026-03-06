@@ -3,8 +3,8 @@ class Communication < ApplicationRecord
 
   belongs_to :child
   has_many :artifacts, dependent: :destroy
-  has_many :communication_correspondents, dependent: :destroy
-  has_many :correspondents, through: :communication_correspondents
+  has_many :communication_correspondents, class_name: "CommunicationContact", dependent: :destroy
+  has_many :correspondents, through: :communication_correspondents, source: :contact
 
   before_validation :ensure_default_correspondent
   validates :ai_status, inclusion: { in: AI_STATUSES }

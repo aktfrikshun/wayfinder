@@ -5,4 +5,6 @@ FactoryBot.define do
     sequence(:name) { |n| "Contact #{n}" }
     phone { "555-000-0000" }
   end
+
+  factory :correspondent, parent: :contact
 end
