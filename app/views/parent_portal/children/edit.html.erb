@@ -10,6 +10,27 @@
 </section>
 
 <section class="card" style="margin-top: 1rem;">
+  <div class="page-head" style="margin-bottom: 0.5rem;">
+    <div>
+      <h3>Child Email Code</h3>
+      <p class="muted">Copy this address on school emails to attach them to <%= @child.name %>'s history.</p>
+    </div>
+    <%= button_to "Regenerate Code", regenerate_alias_parent_child_path(@child), method: :post, class: "btn" %>
+  </div>
+
+  <% if @child.inbound_alias.present? %>
+    <p><strong>Code:</strong> <code><%= @child.inbound_alias %></code></p>
+    <p><strong>Forward-to email:</strong> <code><%= "#{@child.inbound_alias}@wf.frikshun.com" %></code></p>
+  <% else %>
+    <p class="muted">No code yet. Regenerate to create one.</p>
+  <% end %>
+
+  <p style="margin-top: 0.5rem;" class="muted">
+    Any email where this address is on To/CC will be ingested and added to your child's development history.
+  </p>
+</section>
+
+<section class="card" style="margin-top: 1rem;">
   <div class="page-head" style="margin-bottom: 0.75rem;">
     <div>
       <h3>Your Communications For <%= @child.name %></h3>

@@ -1,6 +1,6 @@
 module ParentPortal
   class ChildrenController < BaseController
-    before_action :set_child, only: %i[show edit update destroy]
+    before_action :set_child, only: %i[show edit update destroy regenerate_alias]
     before_action :set_involved_communications, only: :edit
 
     def index
@@ -42,6 +42,11 @@ module ParentPortal
       end
     end
 
+    def regenerate_alias
+      @child.regenerate_inbound_alias!
+      redirect_to edit_parent_child_path(@child), notice: "New child code generated."
+    end
+
     def destroy
       @child.destroy
       redirect_to parent_children_path, notice: "Child deleted."
@@ -54,7 +59,7 @@ module ParentPortal
     end
 
     def child_params
-      params.require(:child).permit(:name, :grade, :school_name, :inbound_alias)
+      params.require(:child).permit(:name, :grade, :school_name)
     end
 
     def set_involved_communications
