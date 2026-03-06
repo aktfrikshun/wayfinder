@@ -1,8 +1,13 @@
+allen_family = Family.find_or_create_by!(name: "Allen Family")
+
 parent = Parent.find_or_create_by!(email: "allen@example.com") do |p|
+  p.family = allen_family
   p.name = "Allen"
 end
 
+parent_user_family = Family.find_or_create_by!(name: "Wayfinder Parent Family")
 Parent.find_or_create_by!(email: "parent@wayfinder.local") do |p|
+  p.family = parent_user_family
   p.name = "Parent User"
 end
 
