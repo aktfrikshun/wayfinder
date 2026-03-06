@@ -1,6 +1,7 @@
 module ParentPortal
   class ChildrenController < BaseController
     before_action :set_child, only: %i[show edit update destroy]
+    before_action :set_involved_communications, only: :edit
 
     def index
       @query = params[:q].to_s.strip
@@ -54,6 +55,19 @@ module ParentPortal
 
     def child_params
       params.require(:child).permit(:name, :grade, :school_name, :inbound_alias)
+    end
+
+    def set_involved_communications
+      correspondent = current_user.correspondent || current_user.create_correspondent!(
+        email: current_user.email,
+        name: current_user.email
+      )
+      @involved_communications =
+        @child.communications.joins(:correspondents)
+          .where(correspondents: { id: correspondent.id })
+          .distinct
+          .order(received_at: :desc)
+          .limit(20)
     end
   end
 end

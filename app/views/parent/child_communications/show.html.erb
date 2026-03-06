@@ -1,0 +1,15 @@
+<div class="page-head">
+  <div>
+    <h1><%= @communication.display_title %></h1>
+    <p><%= @child.name %> · <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_parent_child_communication_path(@child, @communication), class: "btn" %>
+    <%= link_to "Back", edit_parent_child_path(@child), class: "btn" %>
+  </div>
+</div>
+
+<section class="card">
+  <p><strong>Correspondents:</strong> <%= @communication.correspondents.map(&:display_name).join(", ") %></p>
+  <p style="white-space: pre-wrap;"><%= @communication.body_text.presence || "No body text" %></p>
+</section>

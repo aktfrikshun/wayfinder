@@ -8,3 +8,47 @@
 <section class="card">
   <%= render "form", child: @child %>
 </section>
+
+<section class="card" style="margin-top: 1rem;">
+  <div class="page-head" style="margin-bottom: 0.75rem;">
+    <div>
+      <h3>Your Communications For <%= @child.name %></h3>
+      <p class="muted">You can edit communications you are involved in and manage their artifacts.</p>
+    </div>
+    <%= link_to "Add Communication", new_parent_child_communication_path(@child), class: "btn btn-primary" %>
+  </div>
+
+  <% if @involved_communications.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Correspondents</th>
+            <th>Received</th>
+            <th>Artifacts</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @involved_communications.each do |communication| %>
+            <tr>
+              <td><%= communication.subject.presence || "(No Subject)" %></td>
+              <td><%= communication.correspondents.map(&:display_name).join(", ") %></td>
+              <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+              <td><%= communication.artifacts.count %></td>
+              <td>
+                <div class="inline-actions">
+                  <%= link_to "Edit", edit_parent_child_communication_path(@child, communication), class: "btn" %>
+                  <%= button_to "Delete", parent_child_communication_path(@child, communication), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this communication and its artifacts?" } } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No communications yet where you are a correspondent.</p>
+  <% end %>
+</section>

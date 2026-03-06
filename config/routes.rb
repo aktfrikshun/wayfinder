@@ -31,7 +31,12 @@ Rails.application.routes.draw do
 
   scope module: :parent_portal, path: "parent", as: :parent do
     root "dashboard#index"
-    resources :children
+    resources :children do
+      resources :communications, controller: "child_communications", except: :index do
+        post :artifacts, action: :create_artifact, on: :member
+        delete "artifacts/:artifact_id", action: :destroy_artifact, on: :member, as: :artifact
+      end
+    end
     resources :communications, only: %i[index show]
   end
 end

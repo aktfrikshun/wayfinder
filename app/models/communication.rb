@@ -27,4 +27,10 @@ class Communication < ApplicationRecord
 
     errors.add(:correspondents, "must include at least one")
   end
+
+  public
+
+  def display_title
+    subject.presence || "Communication ##{id || 'new'}"
+  end
 end

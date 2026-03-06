@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_213000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_222000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "artifacts", force: :cascade do |t|
     t.text "ai_error"
@@ -72,15 +100,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_213000) do
     t.index ["parent_id"], name: "index_children_on_parent_id"
   end
 
-  create_table "communication_correspondents", force: :cascade do |t|
+  create_table "communication_contacts", force: :cascade do |t|
     t.bigint "communication_id", null: false
-    t.bigint "correspondent_id", null: false
+    t.bigint "contact_id", null: false
     t.datetime "created_at", null: false
     t.string "role"
     t.datetime "updated_at", null: false
-    t.index ["communication_id", "correspondent_id"], name: "idx_comm_corr_unique", unique: true
-    t.index ["communication_id"], name: "index_communication_correspondents_on_communication_id"
-    t.index ["correspondent_id"], name: "index_communication_correspondents_on_correspondent_id"
+    t.index ["communication_id", "contact_id"], name: "idx_comm_contact_unique", unique: true
+    t.index ["communication_id"], name: "index_communication_contacts_on_communication_id"
+    t.index ["contact_id"], name: "index_communication_contacts_on_contact_id"
   end
 
   create_table "communications", force: :cascade do |t|
@@ -105,23 +133,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_213000) do
     t.index ["received_at"], name: "index_communications_on_received_at"
   end
 
-  create_table "correspondents", force: :cascade do |t|
+  create_table "contacts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email"
+    t.bigint "family_id", null: false
     t.string "name"
     t.string "phone"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
-    t.index ["email"], name: "index_correspondents_on_email"
-    t.index ["user_id"], name: "index_correspondents_on_user_id", unique: true
+    t.index ["email"], name: "index_contacts_on_email"
+    t.index ["family_id", "email"], name: "index_contacts_on_family_id_and_email", unique: true
+    t.index ["family_id", "phone"], name: "index_contacts_on_family_id_and_phone", unique: true, where: "(phone IS NOT NULL)"
+    t.index ["family_id"], name: "index_contacts_on_family_id"
+    t.index ["user_id"], name: "index_contacts_on_user_id", unique: true
+  end
+
+  create_table "families", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
   end
 
   create_table "parents", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.bigint "family_id", null: false
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_parents_on_email", unique: true
+    t.index ["family_id"], name: "index_parents_on_family_id"
   end
 
   create_table "solid_cache_entries", force: :cascade do |t|
@@ -263,19 +303,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_213000) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
-    t.string "role"
+    t.string "role", default: "PARENT", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "artifacts", "children"
   add_foreign_key "artifacts", "communications"
   add_foreign_key "children", "parents"
-  add_foreign_key "communication_correspondents", "communications"
-  add_foreign_key "communication_correspondents", "correspondents"
+  add_foreign_key "communication_contacts", "communications"
+  add_foreign_key "communication_contacts", "contacts"
   add_foreign_key "communications", "children"
-  add_foreign_key "correspondents", "users"
+  add_foreign_key "contacts", "families"
+  add_foreign_key "contacts", "users"
+  add_foreign_key "parents", "families"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

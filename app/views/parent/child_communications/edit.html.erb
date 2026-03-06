@@ -1,0 +1,94 @@
+<div class="page-head">
+  <div>
+    <h1>Edit Communication</h1>
+    <p><%= @child.name %> · Manage communication details and associated artifacts.</p>
+  </div>
+</div>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <%= render "form" %>
+</section>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <div class="page-head" style="margin-bottom: 0.75rem;">
+    <div>
+      <h3>Add Artifact</h3>
+      <p class="muted">Upload files to create artifacts linked to this communication.</p>
+    </div>
+  </div>
+
+  <%= form_with model: @new_artifact, url: artifacts_parent_child_communication_path(@child, @communication), method: :post, local: true, multipart: true do |form| %>
+    <div class="form-grid">
+      <div>
+        <%= form.label :title %>
+        <%= form.text_field :title, placeholder: "Attachment title" %>
+      </div>
+
+      <div>
+        <%= form.label :subject %>
+        <%= form.text_field :subject, placeholder: @communication.subject %>
+      </div>
+
+      <div>
+        <%= form.label :source_type %>
+        <%= form.select :source_type, Artifact::SOURCE_TYPES, selected: "upload" %>
+      </div>
+
+      <div>
+        <%= form.label :content_type %>
+        <%= form.select :content_type, Artifact::CONTENT_TYPES, selected: "unknown" %>
+      </div>
+
+      <div class="full">
+        <%= form.label :files, "Files" %>
+        <%= form.file_field :files, multiple: true %>
+      </div>
+
+      <div class="full">
+        <%= form.label :body_text, "Optional note" %>
+        <%= form.text_area :body_text, placeholder: "Optional context for this artifact" %>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top: 1rem;">
+      <%= form.submit "Upload Artifact", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>
+
+<section class="card">
+  <h3>Associated Artifacts</h3>
+  <% if @artifacts.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Files</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @artifacts.each do |artifact| %>
+            <tr>
+              <td><%= artifact.display_title %></td>
+              <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
+              <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
+              <td><%= artifact.files.count %></td>
+              <td>
+                <div class="inline-actions">
+                  <%= link_to "View", parent_communication_path(artifact), class: "btn" %>
+                  <%= button_to "Remove", artifact_parent_child_communication_path(@child, @communication, artifact_id: artifact.id), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Remove this artifact?" } } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No artifacts associated yet.</p>
+  <% end %>
+</section>

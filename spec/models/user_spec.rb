@@ -20,4 +20,15 @@ RSpec.describe User, type: :model do
     expect(user.correspondent).to be_present
     expect(user.correspondent.email).to eq("parent-profile@example.com")
   end
+
+  it "defaults role to parent when omitted" do
+    user = User.create!(
+      email: "default-parent@example.com",
+      password: "Password123!",
+      password_confirmation: "Password123!"
+    )
+
+    expect(user.role).to eq("parent")
+    expect(user.role_label).to eq("PARENT")
+  end
 end

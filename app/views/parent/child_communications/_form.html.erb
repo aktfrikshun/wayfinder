@@ -1,0 +1,60 @@
+<%= form_with model: [:parent, @child, @communication], local: true do |form| %>
+  <% if @communication.errors.any? %>
+    <div class="error-box">
+      <strong><%= pluralize(@communication.errors.count, "error") %> prevented save:</strong>
+      <ul>
+        <% @communication.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div class="full">
+      <%= form.label :subject %>
+      <%= form.text_field :subject, placeholder: "Weekly update" %>
+    </div>
+
+    <div>
+      <%= form.label :from_name %>
+      <%= form.text_field :from_name %>
+    </div>
+
+    <div>
+      <%= form.label :from_email %>
+      <%= form.email_field :from_email %>
+    </div>
+
+    <div>
+      <%= form.label :received_at %>
+      <%= form.datetime_local_field :received_at, value: @communication.received_at&.strftime("%Y-%m-%dT%H:%M") %>
+    </div>
+
+    <div>
+      <%= form.label :source %>
+      <%= form.text_field :source %>
+    </div>
+
+    <div class="full">
+      <%= form.label :correspondent_ids, "Correspondents" %>
+      <%= form.collection_select :correspondent_ids, Correspondent.order(:name, :email), :id, :display_name, {}, { multiple: true, size: 6 } %>
+      <p class="muted">You are always included as a correspondent.</p>
+    </div>
+
+    <div class="full">
+      <%= form.label :body_text %>
+      <%= form.text_area :body_text %>
+    </div>
+
+    <div class="full">
+      <%= form.label :body_html %>
+      <%= form.text_area :body_html %>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top: 1rem;">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Back", edit_parent_child_path(@child), class: "btn" %>
+  </div>
+<% end %>
