@@ -153,6 +153,9 @@ Pipeline runs:
 3. `bundle exec rails db:prepare`
 4. `bundle exec rspec`
 
+Pushes to `main` also trigger automatic Fly deploy via GitHub Actions.
+Required repository secret: `FLY_API_TOKEN`.
+
 ## Fly Deployment
 
 Fly deployment assets are included:
