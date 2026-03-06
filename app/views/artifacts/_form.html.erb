@@ -1,0 +1,134 @@
+<%= form_with model: artifact, local: true do |form| %>
+  <% if artifact.errors.any? %>
+    <div class="error-box">
+      <strong><%= pluralize(artifact.errors.count, "error") %> prevented save:</strong>
+      <ul>
+        <% artifact.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-grid">
+    <div>
+      <%= form.label :communication_id, "Communication" %>
+      <%= form.collection_select :communication_id, Communication.includes(:child).order(received_at: :desc), :id, :subject, { prompt: "Select communication" }, required: true %>
+    </div>
+
+    <div>
+      <%= form.label :title %>
+      <%= form.text_field :title %>
+    </div>
+
+    <div>
+      <%= form.label :source_type %>
+      <%= form.select :source_type, Artifact::SOURCE_TYPES %>
+    </div>
+
+    <div>
+      <%= form.label :content_type %>
+      <%= form.select :content_type, Artifact::CONTENT_TYPES %>
+    </div>
+
+    <div>
+      <%= form.label :source %>
+      <%= form.text_field :source %>
+    </div>
+
+    <div>
+      <%= form.label :subject %>
+      <%= form.text_field :subject %>
+    </div>
+
+    <div>
+      <%= form.label :from_email %>
+      <%= form.email_field :from_email %>
+    </div>
+
+    <div>
+      <%= form.label :from_name %>
+      <%= form.text_field :from_name %>
+    </div>
+
+    <div>
+      <%= form.label :occurred_at %>
+      <%= form.datetime_local_field :occurred_at, value: artifact.occurred_at&.strftime("%Y-%m-%dT%H:%M") %>
+    </div>
+
+    <div>
+      <%= form.label :captured_at %>
+      <%= form.datetime_local_field :captured_at, value: artifact.captured_at&.strftime("%Y-%m-%dT%H:%M") %>
+    </div>
+
+    <div>
+      <%= form.label :processing_state %>
+      <%= form.select :processing_state, Artifact::PROCESSING_STATES %>
+    </div>
+
+    <div>
+      <%= form.label :ai_status %>
+      <%= form.select :ai_status, Artifact::AI_STATUSES %>
+    </div>
+
+    <div>
+      <%= form.label :system_category %>
+      <%= form.select :system_category, Artifact::SYSTEM_CATEGORIES, include_blank: true %>
+    </div>
+
+    <div>
+      <%= form.label :user_category %>
+      <%= form.text_field :user_category %>
+    </div>
+
+    <div class="full">
+      <%= form.label :body_text %>
+      <%= form.text_area :body_text %>
+    </div>
+
+    <div class="full">
+      <%= form.label :body_html %>
+      <%= form.text_area :body_html %>
+    </div>
+
+    <div class="full">
+      <%= form.label :normalized_text %>
+      <%= form.text_area :normalized_text %>
+    </div>
+
+    <div class="full">
+      <%= form.label :raw_payload, "Raw Payload (JSON)" %>
+      <%= form.text_area :raw_payload, value: JSON.pretty_generate(artifact.raw_payload || {}) %>
+    </div>
+
+    <div class="full">
+      <%= form.label :metadata, "Metadata (JSON)" %>
+      <%= form.text_area :metadata, value: JSON.pretty_generate(artifact.metadata || {}) %>
+    </div>
+
+    <div class="full">
+      <%= form.label :tags, "Tags (JSON Array)" %>
+      <%= form.text_area :tags, value: JSON.pretty_generate(artifact.tags || []) %>
+    </div>
+
+    <div class="full">
+      <%= form.label :extracted_payload, "Extracted Payload (JSON)" %>
+      <%= form.text_area :extracted_payload, value: JSON.pretty_generate(artifact.extracted_payload || {}) %>
+    </div>
+
+    <div class="full">
+      <%= form.label :ai_raw_response, "AI Raw Response (JSON)" %>
+      <%= form.text_area :ai_raw_response, value: JSON.pretty_generate(artifact.ai_raw_response || {}) %>
+    </div>
+
+    <div class="full">
+      <%= form.label :ai_error %>
+      <%= form.text_area :ai_error %>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top: 1rem;">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", artifacts_path, class: "btn" %>
+  </div>
+<% end %>

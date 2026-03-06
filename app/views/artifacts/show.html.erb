@@ -1,0 +1,42 @@
+<div class="page-head">
+  <div>
+    <h1><%= @artifact.display_title %></h1>
+    <p><%= @artifact.child.name %> · <%= @artifact.source_type %> / <%= @artifact.content_type %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_artifact_path(@artifact), class: "btn" %>
+    <%= link_to "Back", artifacts_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h3>Artifact Details</h3>
+    <p><strong>Category:</strong> <%= @artifact.effective_category.presence || "-" %></p>
+    <p><strong>AI Status:</strong> <span class="badge badge-<%= @artifact.ai_status %>"><%= @artifact.ai_status %></span></p>
+    <p><strong>Processing State:</strong> <%= @artifact.processing_state %></p>
+    <p><strong>Occurred:</strong> <%= @artifact.occurred_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>Captured:</strong> <%= @artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>From:</strong> <%= @artifact.from_name.presence || "-" %> &lt;<%= @artifact.from_email.presence || "-" %>&gt;</p>
+  </section>
+
+  <section class="card">
+    <h3>Extraction</h3>
+    <p><strong>Method:</strong> <%= @artifact.text_extraction_method.presence || "-" %></p>
+    <p><strong>Quality Score:</strong> <%= @artifact.text_quality_score.presence || "-" %></p>
+    <p><strong>AI Error:</strong> <%= @artifact.ai_error.presence || "None" %></p>
+    <p><strong>Tags:</strong> <%= (@artifact.tags || []).join(", ").presence || "-" %></p>
+  </section>
+</div>
+
+<div class="grid grid-2" style="margin-top: 1rem;">
+  <section class="card">
+    <h3>Normalized Text</h3>
+    <pre style="white-space: pre-wrap;"><%= @artifact.normalized_text.presence || @artifact.body_text.presence || "-" %></pre>
+  </section>
+
+  <section class="card">
+    <h3>Extracted Payload</h3>
+    <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@artifact.extracted_payload || {}) %></pre>
+  </section>
+</div>

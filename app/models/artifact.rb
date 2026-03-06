@@ -19,6 +19,7 @@ class Artifact < ApplicationRecord
   ].freeze
 
   belongs_to :child
+  belongs_to :communication
   has_many_attached :files
 
   validates :source_type, inclusion: { in: SOURCE_TYPES }
@@ -28,10 +29,13 @@ class Artifact < ApplicationRecord
   validates :text_extraction_method, inclusion: { in: TEXT_EXTRACTION_METHODS }, allow_nil: true
   validates :system_category, inclusion: { in: SYSTEM_CATEGORIES }, allow_nil: true
   validates :captured_at, presence: true
+  validate :communication_child_must_match
 
   scope :recent_first, -> {
     order(Arel.sql("occurred_at DESC NULLS LAST, captured_at DESC"))
   }
+
+  before_validation :assign_child_from_communication
 
   def effective_category
     user_category.presence || system_category
@@ -79,5 +83,18 @@ class Artifact < ApplicationRecord
     return effective_category.to_s.humanize if effective_category.present?
 
     "Untitled Artifact"
+  end
+
+  private
+
+  def assign_child_from_communication
+    self.child_id = communication.child_id if communication.present?
+  end
+
+  def communication_child_must_match
+    return if communication.blank? || child_id.blank?
+    return if communication.child_id == child_id
+
+    errors.add(:child, "must match communication child")
   end
 end

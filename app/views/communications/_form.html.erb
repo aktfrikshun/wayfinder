@@ -16,6 +16,12 @@
       <%= form.collection_select :child_id, Child.order(:name), :id, :name, { prompt: "Select child" }, required: true %>
     </div>
 
+    <div class="full">
+      <%= form.label :correspondent_ids, "Correspondents" %>
+      <%= form.collection_select :correspondent_ids, Correspondent.order(:name, :email), :id, :display_name, {}, { multiple: true, size: 6, required: true } %>
+      <p class="muted">Select at least one correspondent for this communication.</p>
+    </div>
+
     <div>
       <%= form.label :source %>
       <%= form.text_field :source %>

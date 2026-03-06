@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :artifact do
-    association :child
+    association :communication
+    child { communication.child }
     source_type { "email" }
     content_type { "message" }
     title { "Weekly update" }
@@ -18,5 +19,13 @@ FactoryBot.define do
     tags { [] }
     extracted_payload { {} }
     metadata { {} }
+
+    after(:build) do |artifact|
+      next if artifact.communication.blank?
+      next if artifact.child.blank?
+      next if artifact.communication.child_id == artifact.child_id
+
+      artifact.communication = build(:communication, child: artifact.child)
+    end
   end
 end

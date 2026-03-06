@@ -1,7 +1,7 @@
 <div class="page-head">
   <div>
     <h1>Command Center</h1>
-    <p>Search and manage parents, children, and communications in one place.</p>
+    <p>Search and manage parents, children, artifacts, users, and legacy communications in one place.</p>
   </div>
 </div>
 
@@ -15,6 +15,12 @@
     <h3>Children</h3>
     <div class="metric"><%= @children_count %></div>
     <p class="muted">Profiles tracked</p>
+  </section>
+  <section class="card">
+    <h3>Artifacts</h3>
+    <div class="metric"><%= @artifacts_count %></div>
+    <p class="muted">Source records captured</p>
+    <p><%= link_to "Open Artifact Management", artifacts_path, class: "btn" %></p>
   </section>
   <section class="card">
     <h3>Communications</h3>
@@ -66,6 +72,17 @@
     </section>
 
     <section class="card">
+      <h3>Artifact Matches</h3>
+      <% if @artifacts_results.present? %>
+        <% @artifacts_results.each do |artifact| %>
+          <p><%= link_to(artifact.display_title, artifact_path(artifact)) %> · <span class="muted"><%= artifact.effective_category.presence || artifact.content_type %></span></p>
+        <% end %>
+      <% else %>
+        <p class="muted">No artifact matches.</p>
+      <% end %>
+    </section>
+
+    <section class="card">
       <h3>Communication Matches</h3>
       <% if @communications_results.present? %>
         <% @communications_results.each do |communication| %>
@@ -88,6 +105,40 @@
     </section>
   </div>
 <% end %>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <div class="page-head" style="margin-bottom: 0.75rem;">
+    <h3>Recent Artifacts</h3>
+    <%= link_to "Open Artifact Management", artifacts_path, class: "btn" %>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Child</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>AI</th>
+          <th>Captured</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_artifacts.each do |artifact| %>
+          <tr>
+            <td><%= link_to artifact.display_title, artifact_path(artifact) %></td>
+            <td><%= artifact.child.name %></td>
+            <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
+            <td><%= artifact.effective_category.presence || "-" %></td>
+            <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
+            <td><%= artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
 
 <section class="card">
   <div class="page-head" style="margin-bottom: 0.75rem;">

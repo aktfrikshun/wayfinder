@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   resources :parents
   resources :children
+  resources :artifacts
   resources :communications
   resources :users
   post "users/:id/impersonate", to: "users#impersonate", as: :impersonate_user
@@ -23,6 +24,10 @@ Rails.application.routes.draw do
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
   get "children/:id/artifacts", to: "api/children_artifacts#index"
   get "children/:id/communications", to: "api/children_communications#index"
+
+  scope module: :profiles, path: "profile", as: :profile do
+    resource :correspondent, only: %i[edit update]
+  end
 
   scope module: :parent_portal, path: "parent", as: :parent do
     root "dashboard#index"

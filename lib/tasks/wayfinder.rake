@@ -5,6 +5,7 @@ namespace :wayfinder do
 
     Communication.find_each do |communication|
       Artifact.find_or_create_by!(
+        communication_id: communication.id,
         child_id: communication.child_id,
         source_type: "email",
         content_type: "message",

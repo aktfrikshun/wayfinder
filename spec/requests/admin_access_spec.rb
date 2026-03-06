@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Admin access", type: :request do
-  let(:protected_paths) { [root_path, parents_path, children_path, communications_path, users_path] }
+  let(:protected_paths) { [root_path, parents_path, children_path, artifacts_path, communications_path, users_path] }
 
   it "redirects unauthenticated visitors to sign in" do
     protected_paths.each do |path|

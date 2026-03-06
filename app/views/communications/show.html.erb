@@ -13,6 +13,7 @@
   <section class="card">
     <h3>Message</h3>
     <p><strong>From:</strong> <%= @communication.from_name.presence || "-" %> &lt;<%= @communication.from_email.presence || "-" %>&gt;</p>
+    <p><strong>Correspondents:</strong> <%= @communication.correspondents.map(&:display_name).join(", ").presence || "-" %></p>
     <p><strong>Source:</strong> <%= @communication.source.presence || "-" %></p>
     <p><strong>Received:</strong> <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
     <p><strong>Text:</strong></p>

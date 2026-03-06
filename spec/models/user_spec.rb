@@ -13,4 +13,11 @@ RSpec.describe User, type: :model do
 
     expect { user.role = "principal" }.to raise_error(ArgumentError, /is not a valid role/)
   end
+
+  it "creates a linked correspondent record on save" do
+    user = create(:user, email: "parent-profile@example.com")
+
+    expect(user.correspondent).to be_present
+    expect(user.correspondent.email).to eq("parent-profile@example.com")
+  end
 end

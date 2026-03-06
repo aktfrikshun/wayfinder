@@ -11,7 +11,22 @@ module Webhooks
 
       return render json: { status: "ignored" }, status: :not_found unless child
 
-      artifact = child.artifacts.create!(
+      correspondent = find_or_create_correspondent(payload)
+      communication = child.communications.create!(
+        source: "postmark",
+        from_email: payload["From"],
+        from_name: payload["FromName"],
+        subject: payload["Subject"],
+        received_at: payload["Date"] || Time.current,
+        body_text: payload["TextBody"],
+        body_html: payload["HtmlBody"],
+        raw_payload: payload,
+        ai_status: "pending",
+        correspondents: [correspondent]
+      )
+
+      artifact = communication.artifacts.create!(
+        child: child,
         source_type: "email",
         content_type: "message",
         title: payload["Subject"].presence || "School Email",
@@ -71,6 +86,15 @@ module Webhooks
         end
 
       params_hash.presence || JSON.parse(request.raw_post)
+    end
+
+    def find_or_create_correspondent(payload)
+      email = payload["From"].to_s.downcase.presence
+      user = email.present? ? User.find_by(email: email) : nil
+
+      Correspondent.find_or_create_by!(email: email, user: user) do |record|
+        record.name = payload["FromName"].presence || email
+      end
     end
   end
 end

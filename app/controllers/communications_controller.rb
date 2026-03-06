@@ -72,12 +72,15 @@ class CommunicationsController < ApplicationController
       :ai_error,
       :raw_payload,
       :ai_raw_response,
-      :ai_extracted
+      :ai_extracted,
+      correspondent_ids: []
     )
   end
 
   def prepared_communication_params
     attrs = communication_params.to_h
+    attrs["correspondent_ids"] ||= []
+    attrs["correspondent_ids"] = attrs["correspondent_ids"].reject(&:blank?)
 
     %w[raw_payload ai_raw_response ai_extracted].each do |field|
       raw_value = attrs[field]

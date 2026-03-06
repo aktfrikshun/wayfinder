@@ -6,9 +6,11 @@ class DashboardController < ApplicationController
 
     @parents_count = Parent.count
     @children_count = Child.count
+    @artifacts_count = Artifact.count
     @communications_count = Communication.count
     @users_count = User.count
 
+    @recent_artifacts = Artifact.includes(child: :parent).recent_first.limit(8)
     @recent_communications = Communication.includes(child: :parent).order(received_at: :desc).limit(8)
 
     return if @query.blank?
@@ -32,6 +34,16 @@ class DashboardController < ApplicationController
         q: pattern
       )
       .order(received_at: :desc)
+      .limit(10)
+
+    @artifacts_results = Artifact.joins(child: :parent)
+      .where(
+        "artifacts.title ILIKE :q OR artifacts.subject ILIKE :q OR artifacts.source_type ILIKE :q OR " \
+        "artifacts.content_type ILIKE :q OR artifacts.system_category ILIKE :q OR artifacts.ai_status ILIKE :q OR " \
+        "children.name ILIKE :q OR parents.email ILIKE :q",
+        q: pattern
+      )
+      .recent_first
       .limit(10)
 
     @users_results = User.where("email ILIKE :q OR role ILIKE :q", q: pattern).limit(10)

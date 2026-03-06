@@ -1,0 +1,42 @@
+<div class="page-head">
+  <div>
+    <h1>Profile Settings</h1>
+    <p>Manage your correspondent contact information used in communication records.</p>
+  </div>
+</div>
+
+<section class="card">
+  <%= form_with model: @correspondent, url: profile_correspondent_path, method: :patch, local: true do |form| %>
+    <% if @correspondent.errors.any? %>
+      <div class="error-box">
+        <strong><%= pluralize(@correspondent.errors.count, "error") %> prevented save:</strong>
+        <ul>
+          <% @correspondent.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-grid">
+      <div>
+        <%= form.label :name %>
+        <%= form.text_field :name, placeholder: "Your display name" %>
+      </div>
+
+      <div>
+        <%= form.label :email %>
+        <%= form.email_field :email, placeholder: "you@example.com" %>
+      </div>
+
+      <div>
+        <%= form.label :phone %>
+        <%= form.telephone_field :phone, placeholder: "(555) 555-1212" %>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top: 1rem;">
+      <%= form.submit "Save Settings", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>

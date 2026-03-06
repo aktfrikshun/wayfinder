@@ -1,0 +1,52 @@
+<div class="page-head">
+  <div>
+    <h1>Artifacts</h1>
+    <p>Manage ingested source artifacts across email, uploads, notes, and system records.</p>
+  </div>
+  <%= link_to "New Artifact", new_artifact_path, class: "btn btn-primary" %>
+</div>
+
+<%= form_with url: artifacts_path, method: :get, local: true, class: "toolbar" do %>
+  <div style="flex: 1 1 320px;">
+    <label for="q">Search</label>
+    <%= text_field_tag :q, @query, placeholder: "Title, category, source, child" %>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-self: end;">
+    <%= submit_tag "Filter", class: "btn" %>
+    <%= link_to "Clear", artifacts_path, class: "btn" %>
+  </div>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Child</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>AI</th>
+        <th>Captured</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @artifacts.each do |artifact| %>
+        <tr>
+          <td><%= link_to artifact.display_title, artifact_path(artifact) %></td>
+          <td><%= artifact.child.name %></td>
+          <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
+          <td><%= artifact.effective_category.presence || "-" %></td>
+          <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
+          <td><%= artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          <td>
+            <div class="inline-actions">
+              <%= link_to "Edit", edit_artifact_path(artifact), class: "btn" %>
+              <%= button_to "Delete", artifact_path(artifact), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this artifact?" } } %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

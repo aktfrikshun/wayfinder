@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_06_213000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
     t.datetime "captured_at", null: false
     t.float "category_confidence"
     t.bigint "child_id", null: false
+    t.bigint "communication_id", null: false
     t.string "content_type", null: false
     t.datetime "created_at", null: false
     t.jsonb "extracted_payload", default: {}, null: false
@@ -48,6 +49,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
     t.index ["ai_status"], name: "index_artifacts_on_ai_status"
     t.index ["captured_at"], name: "index_artifacts_on_captured_at"
     t.index ["child_id"], name: "index_artifacts_on_child_id"
+    t.index ["communication_id"], name: "index_artifacts_on_communication_id"
     t.index ["content_type"], name: "index_artifacts_on_content_type"
     t.index ["extracted_payload"], name: "index_artifacts_on_extracted_payload", using: :gin
     t.index ["metadata"], name: "index_artifacts_on_metadata", using: :gin
@@ -70,6 +72,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
     t.index ["parent_id"], name: "index_children_on_parent_id"
   end
 
+  create_table "communication_correspondents", force: :cascade do |t|
+    t.bigint "communication_id", null: false
+    t.bigint "correspondent_id", null: false
+    t.datetime "created_at", null: false
+    t.string "role"
+    t.datetime "updated_at", null: false
+    t.index ["communication_id", "correspondent_id"], name: "idx_comm_corr_unique", unique: true
+    t.index ["communication_id"], name: "index_communication_correspondents_on_communication_id"
+    t.index ["correspondent_id"], name: "index_communication_correspondents_on_correspondent_id"
+  end
+
   create_table "communications", force: :cascade do |t|
     t.text "ai_error"
     t.jsonb "ai_extracted"
@@ -90,6 +103,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
     t.index ["child_id"], name: "index_communications_on_child_id"
     t.index ["raw_payload"], name: "index_communications_on_raw_payload", using: :gin
     t.index ["received_at"], name: "index_communications_on_received_at"
+  end
+
+  create_table "correspondents", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "name"
+    t.string "phone"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["email"], name: "index_correspondents_on_email"
+    t.index ["user_id"], name: "index_correspondents_on_user_id", unique: true
   end
 
   create_table "parents", force: :cascade do |t|
@@ -246,8 +270,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_200000) do
   end
 
   add_foreign_key "artifacts", "children"
+  add_foreign_key "artifacts", "communications"
   add_foreign_key "children", "parents"
+  add_foreign_key "communication_correspondents", "communications"
+  add_foreign_key "communication_correspondents", "correspondents"
   add_foreign_key "communications", "children"
+  add_foreign_key "correspondents", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
