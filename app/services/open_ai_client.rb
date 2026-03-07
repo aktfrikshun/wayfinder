@@ -1,15 +1,24 @@
 class OpenAIClient
   API_BASE_URL = "https://api.openai.com".freeze
 
-  def initialize(api_key: ENV["OPENAI_API_KEY"], model: ENV.fetch("OPENAI_MODEL", "gpt-4.1-mini"))
+  def initialize(
+    api_key: ENV["OPENAI_API_KEY"],
+    model: ENV.fetch("OPENAI_MODEL", "gpt-4.1-mini"),
+    project: ENV["OPENAI_PROJECT"],
+    organization: ENV["OPENAI_ORG"]
+  )
     @api_key = api_key
     @model = model
+    @project = project
+    @organization = organization
   end
 
   def chat_json(system:, user:, json_schema:, temperature: 0.2)
     response = connection.post("/v1/chat/completions") do |req|
       req.headers["Authorization"] = "Bearer #{@api_key}"
       req.headers["Content-Type"] = "application/json"
+      req.headers["OpenAI-Project"] = @project if @project.present?
+      req.headers["OpenAI-Organization"] = @organization if @organization.present?
       req.body = {
         model: @model,
         temperature: temperature,
