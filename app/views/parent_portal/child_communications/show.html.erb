@@ -4,6 +4,7 @@
     <p><%= @child.name %> · <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
   </div>
   <div class="inline-actions">
+    <%= button_to "Reprocess AI", reprocess_parent_child_communication_path(@child, @communication), method: :post, class: "btn btn-primary" %>
     <%= link_to "Edit", edit_parent_child_communication_path(@child, @communication), class: "btn" %>
     <%= link_to "Back", edit_parent_child_path(@child), class: "btn" %>
   </div>
@@ -12,4 +13,52 @@
 <section class="card">
   <p><strong>Correspondents:</strong> <%= @communication.correspondents.map(&:display_name).join(", ") %></p>
   <p style="white-space: pre-wrap;"><%= @communication.body_text.presence || "No body text" %></p>
+</section>
+
+<section class="card">
+  <h3>Communication AI Extraction</h3>
+  <p>Status: <span class="badge badge-<%= @communication.ai_status %>"><%= @communication.ai_status %></span></p>
+  <% if @communication.ai_extracted.present? %>
+    <pre style="max-height: 320px; overflow: auto;"><%= JSON.pretty_generate(@communication.ai_extracted) %></pre>
+  <% else %>
+    <p class="muted">No AI payload yet.</p>
+  <% end %>
+</section>
+
+<section class="card">
+  <h3>Artifacts & Extraction</h3>
+  <% if @artifacts.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>AI Status</th>
+            <th>Files</th>
+            <th>AI Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @artifacts.each do |artifact| %>
+            <tr>
+              <td><%= artifact.display_title %></td>
+              <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
+              <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
+              <td><%= artifact.files.map(&:filename).join(", ") %></td>
+              <td>
+                <% if artifact.extracted_payload.present? %>
+                  <pre style="max-height: 200px; overflow: auto;"><%= JSON.pretty_generate(artifact.extracted_payload) %></pre>
+                <% else %>
+                  <span class="muted">No AI payload</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No artifacts associated yet.</p>
+  <% end %>
 </section>

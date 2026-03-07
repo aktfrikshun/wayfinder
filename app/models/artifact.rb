@@ -21,6 +21,7 @@ class Artifact < ApplicationRecord
   belongs_to :child
   belongs_to :communication
   has_many_attached :files
+  has_many :insights, dependent: :destroy
 
   validates :source_type, inclusion: { in: SOURCE_TYPES }
   validates :content_type, inclusion: { in: CONTENT_TYPES }

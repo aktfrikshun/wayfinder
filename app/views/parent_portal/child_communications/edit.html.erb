@@ -3,6 +3,9 @@
     <h1>Edit Communication</h1>
     <p><%= @child.name %> · Manage communication details and associated artifacts.</p>
   </div>
+  <div class="inline-actions">
+    <%= button_to "Reprocess AI", reprocess_parent_child_communication_path(@child, @communication), method: :post, class: "btn btn-primary" %>
+  </div>
 </div>
 
 <section class="card" style="margin-bottom: 1rem;">

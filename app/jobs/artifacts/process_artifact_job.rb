@@ -18,6 +18,7 @@ module Artifacts
         ai_raw_response: ai_result[:raw_response],
         extracted_payload: artifact.extracted_payload.to_h.merge(ai_result[:parsed_response])
       )
+      Insights::UpsertFromArtifact.call(artifact)
     rescue StandardError => e
       artifact&.update(processing_state: "failed", ai_status: "failed", ai_error: e.message)
       raise

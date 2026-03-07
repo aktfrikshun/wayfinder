@@ -1,3 +1,6 @@
+require "base64"
+require "stringio"
+
 module Webhooks
   class PostmarkInboundController < ApplicationController
     skip_before_action :verify_authenticity_token
@@ -42,6 +45,8 @@ module Webhooks
         processing_state: "pending",
         ai_status: "pending"
       )
+
+      create_attachment_artifacts(communication, payload, child)
 
       Artifacts::ProcessArtifactJob.perform_later(artifact.id)
 
@@ -104,6 +109,45 @@ module Webhooks
       end
 
       Child.find_by(inbound_alias: local)
+    end
+
+    def create_attachment_artifacts(communication, payload, child)
+      attachments = payload["Attachments"]
+      return unless attachments.is_a?(Array)
+
+      attachments.each do |att|
+        next unless att.is_a?(Hash) && att["Content"].present?
+
+        artifact = communication.artifacts.new(
+          child: child,
+          source_type: "email",
+          content_type: infer_content_type(att["ContentType"]),
+          title: att["Name"].presence || "Email Attachment",
+          subject: communication.subject,
+          occurred_at: payload["Date"] || Time.current,
+          captured_at: Time.current,
+          processing_state: "pending",
+          ai_status: "pending"
+        )
+
+        next unless artifact.save
+
+        artifact.files.attach(
+          io: StringIO.new(Base64.decode64(att["Content"])),
+          filename: att["Name"].presence || "attachment",
+          content_type: att["ContentType"].presence || "application/octet-stream"
+        )
+
+        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      end
+    end
+
+    def infer_content_type(mime)
+      return "pdf" if mime.to_s == "application/pdf"
+      return "image" if mime.to_s.start_with?("image/")
+      return "document" if mime.to_s.start_with?("text/") || mime.to_s.include?("word") || mime.to_s.include?("officedocument")
+
+      "unknown"
     end
 
     def parsed_payload

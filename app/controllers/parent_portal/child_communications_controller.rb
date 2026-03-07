@@ -1,7 +1,7 @@
 module ParentPortal
   class ChildCommunicationsController < BaseController
     before_action :set_child
-    before_action :set_communication, only: %i[show edit update destroy create_artifact destroy_artifact]
+    before_action :set_communication, only: %i[show edit update destroy create_artifact destroy_artifact reprocess]
 
     def new
       @communication = @child.communications.new(
@@ -95,6 +95,15 @@ module ParentPortal
       artifact = @communication.artifacts.find(params[:artifact_id])
       artifact.destroy
       redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Artifact removed."
+    end
+
+    def reprocess
+      AI::ExtractCommunicationJob.perform_later(@communication.id)
+      @communication.artifacts.find_each do |artifact|
+        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      end
+
+      redirect_back fallback_location: parent_child_communication_path(@child, @communication), notice: "Reprocessing queued."
     end
 
     private

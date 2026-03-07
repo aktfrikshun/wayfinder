@@ -39,6 +39,7 @@ Rails.application.routes.draw do
       resources :communications, controller: "child_communications", except: :index do
         post :artifacts, action: :create_artifact, on: :member
         delete "artifacts/:artifact_id", action: :destroy_artifact, on: :member, as: :artifact
+        post :reprocess, on: :member
       end
     end
     resources :communications, only: %i[index show]
