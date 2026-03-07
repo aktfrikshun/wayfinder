@@ -49,6 +49,17 @@
 </section>
 
 <section class="card" style="margin-top: 1rem;">
+  <div class="page-head" style="margin-bottom: 0.5rem;">
+    <div>
+      <h3>Insights</h3>
+      <p class="muted">Clear and rebuild insights from all communications and artifacts.</p>
+    </div>
+    <%= button_to "Regenerate Insights", regenerate_insights_parent_child_path(@child), method: :post, class: "btn btn-primary" %>
+  </div>
+  <p class="muted">Existing insights will be cleared, then AI extraction will re-run for every communication and artifact for <%= @child.name %>.</p>
+</section>
+
+<section class="card" style="margin-top: 1rem;">
   <div class="page-head" style="margin-bottom: 0.75rem;">
     <div>
       <h3>Your Communications For <%= @child.name %></h3>

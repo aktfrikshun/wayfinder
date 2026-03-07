@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     resources :invitations, only: %i[index new create]
     resources :children do
       post :regenerate_alias, on: :member
+      post :regenerate_insights, on: :member
       resources :communications, controller: "child_communications", except: :index do
         post :artifacts, action: :create_artifact, on: :member
         delete "artifacts/:artifact_id", action: :destroy_artifact, on: :member, as: :artifact

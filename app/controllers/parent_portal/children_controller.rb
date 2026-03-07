@@ -1,6 +1,6 @@
 module ParentPortal
   class ChildrenController < BaseController
-    before_action :set_child, only: %i[show edit update destroy regenerate_alias]
+    before_action :set_child, only: %i[show edit update destroy regenerate_alias regenerate_insights]
     before_action :set_involved_communications, only: :edit
 
     def index
@@ -45,6 +45,20 @@ module ParentPortal
     def regenerate_alias
       @child.regenerate_inbound_alias!
       redirect_to edit_parent_child_path(@child), notice: "New child code generated."
+    end
+
+    def regenerate_insights
+      @child.insights.delete_all
+
+      @child.communications.find_each do |communication|
+        AI::ExtractCommunicationJob.perform_later(communication.id)
+      end
+
+      @child.artifacts.find_each do |artifact|
+        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      end
+
+      redirect_to edit_parent_child_path(@child), notice: "Insight regeneration queued for all communications and artifacts."
     end
 
     def destroy
