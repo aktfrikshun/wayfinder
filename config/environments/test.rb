@@ -29,8 +29,8 @@ Rails.application.configure do
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
 
-  # Store uploaded files on the local file system in a temporary directory.
-  config.active_storage.service = :test
+  # Store uploaded files on the local file system in a temporary directory (override via ACTIVE_STORAGE_SERVICE when needed).
+  config.active_storage.service = (ENV["ACTIVE_STORAGE_SERVICE"] || "test").to_sym
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the

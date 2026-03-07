@@ -46,6 +46,7 @@ module Webhooks
         ai_status: "pending"
       )
 
+      attach_raw_email(artifact, payload)
       create_attachment_artifacts(communication, payload, child)
 
       Artifacts::ProcessArtifactJob.perform_later(artifact.id)
@@ -140,6 +141,17 @@ module Webhooks
 
         Artifacts::ProcessArtifactJob.perform_later(artifact.id)
       end
+    end
+
+    def attach_raw_email(artifact, payload)
+      raw_email = payload["RawEmail"]
+      return if raw_email.blank?
+
+      artifact.raw_email.attach(
+        io: StringIO.new(raw_email),
+        filename: "raw-email-#{artifact.id}.eml",
+        content_type: "message/rfc822"
+      )
     end
 
     def infer_content_type(mime)

@@ -16,7 +16,8 @@ module Artifacts
         processing_state: "processed",
         ai_status: "complete",
         ai_raw_response: ai_result[:raw_response],
-        extracted_payload: artifact.extracted_payload.to_h.merge(ai_result[:parsed_response])
+        extracted_payload: artifact.extracted_payload.to_h.merge(ai_result[:parsed_response]),
+        last_processed_at: Time.current
       )
       Insights::UpsertFromArtifact.call(artifact)
     rescue StandardError => e

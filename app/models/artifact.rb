@@ -21,6 +21,7 @@ class Artifact < ApplicationRecord
   belongs_to :child
   belongs_to :communication
   has_many_attached :files
+  has_one_attached :raw_email
   has_many :insights, dependent: :destroy
 
   validates :source_type, inclusion: { in: SOURCE_TYPES }
@@ -72,6 +73,40 @@ class Artifact < ApplicationRecord
 
   def categorized?
     effective_category.present?
+  end
+
+  def primary_file
+    files.attachments.first
+  end
+
+  def file_count
+    files.attachments.size
+  end
+
+  def file_names
+    files.attachments.map { |att| att.filename.to_s }
+  end
+
+  def mime_types
+    files.attachments.filter_map { |att| att.blob&.content_type }
+  end
+
+  def total_byte_size
+    files.attachments.sum { |att| att.blob&.byte_size.to_i }
+  end
+
+  def file_metadata
+    files.attachments.map do |att|
+      blob = att.blob
+      {
+        filename: att.filename.to_s,
+        content_type: blob&.content_type,
+        byte_size: blob&.byte_size,
+        created_at: blob&.created_at,
+        checksum: blob&.checksum,
+        key: blob&.key
+      }
+    end
   end
 
   def needs_ocr?

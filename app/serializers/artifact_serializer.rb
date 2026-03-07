@@ -16,7 +16,12 @@ class ArtifactSerializer
       ai_status: @artifact.ai_status,
       effective_category: @artifact.effective_category,
       tags: @artifact.tags,
-      summary: @artifact.extracted_payload.to_h["summary"]
+      summary: @artifact.extracted_payload.to_h["summary"],
+      file_count: @artifact.file_count,
+      mime_types: @artifact.mime_types,
+      total_byte_size: @artifact.total_byte_size,
+      files: @artifact.file_metadata,
+      raw_email_attached: @artifact.raw_email.attached?
     }
   end
 end

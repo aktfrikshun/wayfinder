@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_06_230100) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,12 +51,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_230100) do
     t.datetime "captured_at", null: false
     t.float "category_confidence"
     t.bigint "child_id", null: false
+    t.integer "classification_version", default: 1, null: false
     t.bigint "communication_id", null: false
     t.string "content_type", null: false
     t.datetime "created_at", null: false
     t.jsonb "extracted_payload", default: {}, null: false
+    t.integer "extraction_version", default: 1, null: false
     t.string "from_email"
     t.string "from_name"
+    t.integer "insight_version", default: 1, null: false
+    t.datetime "last_processed_at"
     t.jsonb "metadata", default: {}, null: false
     t.text "normalized_text"
     t.datetime "occurred_at"
@@ -152,6 +156,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_230100) do
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "insights", force: :cascade do |t|
+    t.bigint "artifact_id", null: false
+    t.text "body"
+    t.bigint "child_id", null: false
+    t.float "confidence"
+    t.datetime "created_at", null: false
+    t.string "priority"
+    t.jsonb "signals", default: {}
+    t.string "status", default: "active", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["artifact_id"], name: "index_insights_on_artifact_id_unique", unique: true
+    t.index ["child_id"], name: "index_insights_on_child_id"
+    t.index ["priority"], name: "index_insights_on_priority"
+    t.index ["status"], name: "index_insights_on_status"
   end
 
   create_table "parents", force: :cascade do |t|
@@ -336,6 +357,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_06_230100) do
   add_foreign_key "communications", "children"
   add_foreign_key "contacts", "families"
   add_foreign_key "contacts", "users"
+  add_foreign_key "insights", "artifacts"
+  add_foreign_key "insights", "children"
   add_foreign_key "parents", "families"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

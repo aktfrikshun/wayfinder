@@ -43,6 +43,7 @@ Wayfinder is a Rails 8 application that ingests family/school artifacts, runs ex
 - Solid Cache (database-backed Rails cache store)
 - OpenAI API (via Faraday)
 - RSpec + FactoryBot
+- Active Storage (Disk for dev/test, S3-compatible for production)
 
 ## Prerequisites
 
@@ -76,6 +77,19 @@ Important variables:
 - `POSTMARK_API_TOKEN=...`
 - `POSTMARK_MESSAGE_STREAM=outbound`
 - `MAIL_FROM=wayfinder@frikshun.com`
+- `ACTIVE_STORAGE_SERVICE=local` (development default) or `amazon`
+- `AWS_ACCESS_KEY_ID=...`
+- `AWS_SECRET_ACCESS_KEY=...`
+- `AWS_REGION=us-east-1`
+- `AWS_BUCKET=wayfinder-artifacts`
+- `AWS_ENDPOINT=https://s3.us-east-1.amazonaws.com` (optional for S3-compatible providers)
+- `AWS_FORCE_PATH_STYLE=true` (optional; set for MinIO or some compat providers)
+
+On Fly.io, set storage credentials as secrets (example):
+
+```bash
+fly secrets set AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_REGION=us-east-1 AWS_BUCKET=wayfinder-artifacts --app wayfinder-frikshun
+```
 
 ## Setup
 

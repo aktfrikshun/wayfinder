@@ -2,7 +2,9 @@ module Artifacts
   module Extractors
     class DocxTextExtractor < BaseExtractor
       def call
-        text = artifact.metadata.to_h["document_text"].presence || artifact.body_text
+        text = artifact.metadata.to_h["document_text"].presence ||
+               artifact.body_text.presence ||
+               read_attachment_as_text
 
         {
           method: "native",
