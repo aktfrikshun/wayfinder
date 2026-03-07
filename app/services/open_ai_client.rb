@@ -14,6 +14,8 @@ class OpenAIClient
   end
 
   def chat_json(system:, user:, json_schema:, temperature: 0.2)
+    raise "Missing OPENAI_API_KEY" if @api_key.blank?
+
     response = connection.post("/v1/chat/completions") do |req|
       req.headers["Authorization"] = "Bearer #{@api_key}"
       req.headers["Content-Type"] = "application/json"
@@ -33,7 +35,7 @@ class OpenAIClient
       }
     end
 
-    raise "OpenAI API error: #{response.status}" unless response.success?
+    raise "OpenAI API error: #{response.status} (key_len=#{@api_key.to_s.length})" unless response.success?
 
     body = response.body
     content = body.dig("choices", 0, "message", "content")
