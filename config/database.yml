@@ -22,7 +22,7 @@ default: &default
 
 development:
   <<: *default
-  url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/wayfinder_development") %>
+  url: <%= ENV.fetch("DATABASE_URL", "postgres://wayfinder:wayfinder@localhost:5432/wayfinder_development") %>
   database: wayfinder_development
 
   # The specified database role being used to connect to PostgreSQL.
@@ -57,7 +57,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/wayfinder_test") %>
+  url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://wayfinder:wayfinder@localhost:5432/wayfinder_test") %>
   database: wayfinder_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
