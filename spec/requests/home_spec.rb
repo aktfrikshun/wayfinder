@@ -5,8 +5,8 @@ RSpec.describe "Home landing", type: :request do
     get root_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("Understand Your Child's Growth, Not Just Their Grades")
-    expect(response.body).to include("Current Product Features")
+    expect(response.body).to include("Support Your Child's Growth With Everyone Working Together")
+    expect(response.body).to include("Features and Benefits")
   end
 
   it "redirects signed-in admins to dashboard" do
