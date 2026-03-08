@@ -10,8 +10,10 @@
   <li>Temporary password: <code><%= @temporary_password %></code></li>
 </ul>
 
-<p>
-  <%= link_to "Sign in to Wayfinder", @login_url %>
-</p>
+<% if @login_url.present? %>
+  <p>
+    <%= link_to "Sign in to Wayfinder", @login_url %>
+  </p>
+<% end %>
 
 <p>For security, you will be required to change this temporary password immediately after signing in.</p>

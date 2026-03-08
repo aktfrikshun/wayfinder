@@ -8,6 +8,8 @@ Temporary login details
 - Email: <%= params[:email] %>
 - Temporary password: <%= @temporary_password %>
 
+<% if @login_url.present? %>
 Sign in: <%= @login_url %>
+<% end %>
 
 You will be required to change this temporary password immediately after signing in.
