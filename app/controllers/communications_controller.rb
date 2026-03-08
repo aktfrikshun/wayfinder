@@ -41,10 +41,7 @@ class CommunicationsController < ApplicationController
   end
 
   def update
-    attrs = prepared_communication_params
-    return render(:edit, status: :unprocessable_entity) unless attrs
-
-    if @communication.update(attrs)
+    if @communication.update(communication_edit_params)
       redirect_to @communication, notice: "Communication updated."
     else
       @attachments = @communication.attachments.recent_first
@@ -71,6 +68,7 @@ class CommunicationsController < ApplicationController
       :from_name,
       :subject,
       :received_at,
+      :description,
       :body_text,
       :body_html,
       :ai_status,
@@ -80,6 +78,10 @@ class CommunicationsController < ApplicationController
       :ai_extracted,
       correspondent_ids: []
     )
+  end
+
+  def communication_edit_params
+    params.require(:communication).permit(:description)
   end
 
   def prepared_communication_params

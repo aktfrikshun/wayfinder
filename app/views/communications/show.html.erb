@@ -18,6 +18,7 @@
     <p><strong>Correspondents:</strong> <%= @communication.correspondents.map(&:display_name).join(", ").presence || "-" %></p>
     <p><strong>Source:</strong> <%= @communication.source.presence || "-" %></p>
     <p><strong>Received:</strong> <%= @communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>Description:</strong> <%= @communication.description.presence || "-" %></p>
     <p><strong>Text:</strong></p>
     <pre><%= @communication.body_text.presence || "-" %></pre>
   </section>

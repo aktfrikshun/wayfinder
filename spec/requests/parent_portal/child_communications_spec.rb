@@ -29,7 +29,7 @@ RSpec.describe "Parent child communication management", type: :request do
       post attachments_parent_child_communication_path(child, communication), params: {
         attachment: {
           title: "Attachment",
-          files: [file]
+          files: ["", file]
         }
       }
     end.to change(Attachment, :count).by(1)

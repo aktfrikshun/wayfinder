@@ -42,11 +42,6 @@
         <%= form.select :source_type, Attachment::SOURCE_TYPES, selected: "upload" %>
       </div>
 
-      <div>
-        <%= form.label :content_type %>
-        <%= form.select :content_type, Attachment::CONTENT_TYPES, selected: "unknown" %>
-      </div>
-
       <div class="full">
         <%= form.label :files, "Files" %>
         <%= form.file_field :files, multiple: true %>

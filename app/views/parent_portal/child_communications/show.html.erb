@@ -12,6 +12,7 @@
 
 <section class="card">
   <p><strong>Correspondents:</strong> <%= @communication.correspondents.map(&:display_name).join(", ") %></p>
+  <p><strong>Description:</strong> <%= @communication.description.presence || "-" %></p>
   <p style="white-space: pre-wrap;"><%= @communication.body_text.presence || "No body text" %></p>
 </section>
 

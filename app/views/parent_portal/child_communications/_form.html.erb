@@ -11,46 +11,53 @@
   <% end %>
 
   <div class="form-grid">
-    <div class="full">
-      <%= form.label :subject %>
-      <%= form.text_field :subject, placeholder: "Weekly update" %>
-    </div>
+    <% if @communication.persisted? %>
+      <div class="full">
+        <%= form.label :description, "Description" %>
+        <%= form.text_area :description, placeholder: "Add context for this communication." %>
+      </div>
+    <% else %>
+      <div class="full">
+        <%= form.label :subject %>
+        <%= form.text_field :subject, placeholder: "Weekly update" %>
+      </div>
 
-    <div>
-      <%= form.label :from_name %>
-      <%= form.text_field :from_name %>
-    </div>
+      <div>
+        <%= form.label :from_name %>
+        <%= form.text_field :from_name %>
+      </div>
 
-    <div>
-      <%= form.label :from_email %>
-      <%= form.email_field :from_email %>
-    </div>
+      <div>
+        <%= form.label :from_email %>
+        <%= form.email_field :from_email %>
+      </div>
 
-    <div>
-      <%= form.label :received_at %>
-      <%= form.datetime_local_field :received_at, value: @communication.received_at&.strftime("%Y-%m-%dT%H:%M") %>
-    </div>
+      <div>
+        <%= form.label :received_at %>
+        <%= form.datetime_local_field :received_at, value: @communication.received_at&.strftime("%Y-%m-%dT%H:%M") %>
+      </div>
 
-    <div>
-      <%= form.label :source %>
-      <%= form.text_field :source %>
-    </div>
+      <div>
+        <%= form.label :source %>
+        <%= form.text_field :source %>
+      </div>
 
-    <div class="full">
-      <%= form.label :correspondent_ids, "Correspondents" %>
-      <%= form.collection_select :correspondent_ids, Correspondent.order(:name, :email), :id, :display_name, {}, { multiple: true, size: 6 } %>
-      <p class="muted">You are always included as a correspondent.</p>
-    </div>
+      <div class="full">
+        <%= form.label :correspondent_ids, "Correspondents" %>
+        <%= form.collection_select :correspondent_ids, Correspondent.order(:name, :email), :id, :display_name, {}, { multiple: true, size: 6 } %>
+        <p class="muted">You are always included as a correspondent.</p>
+      </div>
 
-    <div class="full">
-      <%= form.label :body_text %>
-      <%= form.text_area :body_text %>
-    </div>
+      <div class="full">
+        <%= form.label :body_text %>
+        <%= form.text_area :body_text %>
+      </div>
 
-    <div class="full">
-      <%= form.label :body_html %>
-      <%= form.text_area :body_html %>
-    </div>
+      <div class="full">
+        <%= form.label :body_html %>
+        <%= form.text_area :body_html %>
+      </div>
+    <% end %>
   </div>
 
   <div class="toolbar" style="margin-top: 1rem;">

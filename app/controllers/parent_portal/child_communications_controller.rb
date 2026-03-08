@@ -48,11 +48,7 @@ module ParentPortal
     end
 
     def update
-      attrs = communication_params
-      attrs[:correspondent_ids] = Array(attrs[:correspondent_ids]).reject(&:blank?)
-      attrs[:correspondent_ids] |= [current_correspondent.id]
-
-      if @communication.update(attrs)
+      if @communication.update(communication_edit_params)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Communication updated."
       else
         @attachments = @communication.attachments.recent_first
@@ -68,7 +64,7 @@ module ParentPortal
 
     def create_attachment
       attrs = attachment_params
-      files = attrs.delete(:files)
+      files = sanitize_uploaded_files(attrs.delete(:files))
 
       attachment = @communication.attachments.new(attrs)
       attachment.child = @child
@@ -77,7 +73,7 @@ module ParentPortal
       attachment.occurred_at ||= Time.current
       attachment.processing_state ||= "pending"
       attachment.ai_status ||= "pending"
-      attachment.content_type = infer_content_type(files, attachment.content_type)
+      attachment.content_type = infer_content_type(files)
 
       if attachment.save
         attachment.files.attach(files) if files.present?
@@ -122,6 +118,7 @@ module ParentPortal
 
     def communication_params
       params.require(:communication).permit(
+        :description,
         :subject,
         :body_text,
         :body_html,
@@ -131,6 +128,10 @@ module ParentPortal
         :from_name,
         correspondent_ids: []
       )
+    end
+
+    def communication_edit_params
+      params.require(:communication).permit(:description)
     end
 
     def attachment_params
@@ -150,22 +151,25 @@ module ParentPortal
         :body_html,
         :source,
         :source_type,
-        :content_type,
         :captured_at,
         :occurred_at,
         files: []
       )
     end
 
-    def infer_content_type(files, fallback)
+    def sanitize_uploaded_files(files)
+      Array(files).select { |file| file.respond_to?(:content_type) && file.respond_to?(:original_filename) }
+    end
+
+    def infer_content_type(files)
       file = Array(files).first
       mime = file&.content_type.to_s
-      return fallback.presence || "unknown" if mime.blank?
+      return "unknown" if mime.blank?
       return "image" if mime.start_with?("image/")
       return "pdf" if mime == "application/pdf"
       return "document" if mime.start_with?("text/") || mime.include?("word") || mime.include?("officedocument")
 
-      fallback.presence || "unknown"
+      "unknown"
     end
   end
 end
