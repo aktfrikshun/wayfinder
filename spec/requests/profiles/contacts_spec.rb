@@ -26,4 +26,23 @@ RSpec.describe "Profile correspondent settings", type: :request do
     expect(user.correspondent.email).to eq("liaison@example.org")
     expect(user.correspondent.phone).to eq("555-222-1000")
   end
+
+  it "accepts legacy contact params payload" do
+    user = create(:user)
+    sign_in(user)
+
+    patch profile_correspondent_path, params: {
+      contact: {
+        name: "Legacy Contact Payload",
+        email: "legacy@example.org",
+        phone: "555-111-2222"
+      }
+    }
+
+    expect(response).to redirect_to(edit_profile_correspondent_path)
+    user.reload
+    expect(user.correspondent.name).to eq("Legacy Contact Payload")
+    expect(user.correspondent.email).to eq("legacy@example.org")
+    expect(user.correspondent.phone).to eq("555-111-2222")
+  end
 end

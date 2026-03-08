@@ -26,7 +26,11 @@ module Profiles
     end
 
     def correspondent_params
-      params.require(:correspondent).permit(:name, :email, :phone)
+      source = params[:correspondent] || params[:contact]
+      return ActionController::Parameters.new({}).permit(:name, :email, :phone) if source.blank?
+
+      source = ActionController::Parameters.new(source) unless source.is_a?(ActionController::Parameters)
+      source.permit(:name, :email, :phone)
     end
   end
 end
