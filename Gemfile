@@ -20,6 +20,7 @@ gem "faraday"
 gem "devise"
 gem "postmark-rails"
 gem "paper_trail"
+gem "pdf-reader"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"

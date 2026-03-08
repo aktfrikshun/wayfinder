@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.1)
     action_text-trix (2.1.16)
       railties
     actioncable (8.1.2)
@@ -77,6 +78,7 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
+    afm (1.0.0)
     ast (2.4.3)
     aws-eventstream (1.4.0)
     aws-partitions (1.1223.0)
@@ -166,6 +168,7 @@ GEM
     globalid (1.3.0)
       activesupport (>= 6.1)
     hashdiff (1.2.1)
+    hashery (2.1.2)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -264,6 +267,12 @@ GEM
     parser (3.3.10.2)
       ast (~> 2.4.1)
       racc
+    pdf-reader (2.15.1)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (>= 0.2.1, < 2)
+      hashery (~> 2.0)
+      ruby-rc4
+      ttfunk
     pg (1.6.3)
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-aarch64-linux-musl)
@@ -387,6 +396,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop (~> 1.81)
     ruby-progressbar (1.13.0)
+    ruby-rc4 (0.1.5)
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
@@ -420,6 +430,7 @@ GEM
     thruster (0.1.18-x86_64-linux)
     timeout (0.6.0)
     tsort (0.2.0)
+    ttfunk (1.7.0)
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
@@ -476,6 +487,7 @@ DEPENDENCIES
   jbuilder
   kamal
   paper_trail
+  pdf-reader
   pg (~> 1.1)
   postmark-rails
   propshaft

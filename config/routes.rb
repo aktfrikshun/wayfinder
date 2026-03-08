@@ -17,9 +17,12 @@ Rails.application.routes.draw do
   resources :parents
   resources :children do
     get :insights, on: :member
+    post :regenerate_insights, on: :member
   end
   resources :attachments, controller: "attachments"
-  resources :communications
+  resources :communications do
+    post :reprocess, on: :member
+  end
   resources :users
   post "users/:id/impersonate", to: "users#impersonate", as: :impersonate_user
   delete "impersonation", to: "impersonations#destroy", as: :stop_impersonating

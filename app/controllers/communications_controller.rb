@@ -1,6 +1,6 @@
 class CommunicationsController < ApplicationController
   before_action :require_admin!
-  before_action :set_communication, only: %i[show edit update destroy]
+  before_action :set_communication, only: %i[show edit update destroy reprocess]
 
   def index
     @query = params[:q].to_s.strip
@@ -54,6 +54,11 @@ class CommunicationsController < ApplicationController
   def destroy
     @communication.destroy
     redirect_to communications_path, notice: "Communication deleted."
+  end
+
+  def reprocess
+    AI::ReprocessCommunicationJob.perform_later(@communication.id)
+    redirect_back fallback_location: communication_path(@communication), notice: "Reprocessing queued."
   end
 
   private

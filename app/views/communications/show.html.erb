@@ -4,6 +4,7 @@
     <p><%= @communication.child.name %> · <span class="badge badge-<%= @communication.ai_status %>"><%= @communication.ai_status %></span></p>
   </div>
   <div class="inline-actions">
+    <%= button_to "Reprocess AI", reprocess_communication_path(@communication), method: :post, class: "btn btn-primary" %>
     <%= link_to "Edit", edit_communication_path(@communication), class: "btn" %>
     <%= link_to "Manage Attachments", attachments_path(communication_id: @communication.id), class: "btn" %>
     <%= link_to "Add Attachment", new_attachment_path(communication_id: @communication.id), class: "btn" %>

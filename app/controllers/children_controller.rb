@@ -1,6 +1,6 @@
 class ChildrenController < ApplicationController
   before_action :require_admin!
-  before_action :set_child, only: %i[show edit update destroy insights]
+  before_action :set_child, only: %i[show edit update destroy insights regenerate_insights]
 
   def index
     @query = params[:q].to_s.strip
@@ -20,6 +20,16 @@ class ChildrenController < ApplicationController
   def insights
     @attachments = @child.attachments.includes(:communication).recent_first
     @insights = @child.insights.includes(:attachment).order(updated_at: :desc)
+  end
+
+  def regenerate_insights
+    @child.insights.delete_all
+
+    @child.communications.find_each do |communication|
+      AI::ReprocessCommunicationJob.perform_later(communication.id)
+    end
+
+    redirect_to @child, notice: "Insight regeneration queued for all communications and attachments."
   end
 
   def new

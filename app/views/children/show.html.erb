@@ -4,6 +4,7 @@
     <p><%= @child.parent.email %> · Grade <%= @child.grade.presence || "-" %></p>
   </div>
   <div class="inline-actions">
+    <%= button_to "Regenerate Insights", regenerate_insights_child_path(@child), method: :post, class: "btn btn-primary" %>
     <%= link_to "Insights", insights_child_path(@child), class: "btn btn-primary" %>
     <%= link_to "Edit", edit_child_path(@child), class: "btn" %>
     <%= link_to "Back", children_path, class: "btn" %>
