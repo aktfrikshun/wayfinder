@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Parent child communication management", type: :request do
   include ActionDispatch::TestProcess::FixtureFile
 
-  it "allows parent to create communication and manage artifacts" do
+  it "allows parent to create communication and manage attachments" do
     parent = create(:parent, email: "parent-manage@example.com")
     child = create(:child, parent: parent)
     user = create(:user, role: :parent, email: parent.email)
@@ -26,19 +26,19 @@ RSpec.describe "Parent child communication management", type: :request do
     file = fixture_file_upload("sample.txt", "text/plain")
 
     expect do
-      post artifacts_parent_child_communication_path(child, communication), params: {
-        artifact: {
+      post attachments_parent_child_communication_path(child, communication), params: {
+        attachment: {
           title: "Attachment",
           files: [file]
         }
       }
-    end.to change(Artifact, :count).by(1)
+    end.to change(Attachment, :count).by(1)
 
-    artifact = communication.artifacts.order(:created_at).last
-    expect(artifact.files.count).to eq(1)
+    attachment = communication.attachments.order(:created_at).last
+    expect(attachment.files.count).to eq(1)
 
     expect do
-      delete artifact_parent_child_communication_path(child, communication, artifact_id: artifact.id)
-    end.to change(Artifact, :count).by(-1)
+      delete attachment_parent_child_communication_path(child, communication, attachment_id: attachment.id)
+    end.to change(Attachment, :count).by(-1)
   end
 end

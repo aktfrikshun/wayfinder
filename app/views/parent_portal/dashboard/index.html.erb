@@ -16,12 +16,12 @@
     <div class="metric"><%= @children.count %></div>
   </section>
   <section class="card">
-    <h3>Communications</h3>
-    <div class="metric"><%= @artifacts_count %></div>
+    <h3>Attachments</h3>
+    <div class="metric"><%= @attachments_count %></div>
   </section>
   <section class="card">
     <h3>Latest Activity</h3>
-    <p class="muted" style="margin-top: 0.5rem;"><%= @recent_artifacts.first&.occurred_at&.strftime("%Y-%m-%d %H:%M") || @recent_artifacts.first&.captured_at&.strftime("%Y-%m-%d %H:%M") || "No messages yet" %></p>
+    <p class="muted" style="margin-top: 0.5rem;"><%= @recent_attachments.first&.occurred_at&.strftime("%Y-%m-%d %H:%M") || @recent_attachments.first&.captured_at&.strftime("%Y-%m-%d %H:%M") || "No messages yet" %></p>
   </section>
 </div>
 

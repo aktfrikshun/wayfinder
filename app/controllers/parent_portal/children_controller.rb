@@ -15,7 +15,7 @@ module ParentPortal
     end
 
     def show
-      @recent_artifacts = @child.artifacts.recent_first.limit(10)
+      @recent_attachments = @child.attachments.recent_first.limit(10)
     end
 
     def new
@@ -54,11 +54,11 @@ module ParentPortal
         AI::ExtractCommunicationJob.perform_later(communication.id)
       end
 
-      @child.artifacts.find_each do |artifact|
-        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      @child.attachments.find_each do |attachment|
+        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
       end
 
-      redirect_to edit_parent_child_path(@child), notice: "Insight regeneration queued for all communications and artifacts."
+      redirect_to edit_parent_child_path(@child), notice: "Insight regeneration queued for all communications and attachments."
     end
 
     def destroy

@@ -28,7 +28,7 @@ module Webhooks
         correspondents: [correspondent]
       )
 
-      artifact = communication.artifacts.create!(
+      attachment = communication.attachments.create!(
         child: child,
         source_type: "email",
         content_type: "message",
@@ -46,10 +46,10 @@ module Webhooks
         ai_status: "pending"
       )
 
-      attach_raw_email(artifact, payload)
-      create_attachment_artifacts(communication, payload, child)
+      attach_raw_email(attachment, payload)
+      create_attachment_records(communication, payload, child)
 
-      Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      Attachments::ProcessAttachmentJob.perform_later(attachment.id)
 
       render json: { status: "ok" }
     rescue JSON::ParserError
@@ -112,14 +112,14 @@ module Webhooks
       Child.find_by(inbound_alias: local)
     end
 
-    def create_attachment_artifacts(communication, payload, child)
+    def create_attachment_records(communication, payload, child)
       attachments = payload["Attachments"]
       return unless attachments.is_a?(Array)
 
       attachments.each do |att|
         next unless att.is_a?(Hash) && att["Content"].present?
 
-        artifact = communication.artifacts.new(
+        attachment = communication.attachments.new(
           child: child,
           source_type: "email",
           content_type: infer_content_type(att["ContentType"]),
@@ -131,25 +131,25 @@ module Webhooks
           ai_status: "pending"
         )
 
-        next unless artifact.save
+        next unless attachment.save
 
-        artifact.files.attach(
+        attachment.files.attach(
           io: StringIO.new(Base64.decode64(att["Content"])),
           filename: att["Name"].presence || "attachment",
           content_type: att["ContentType"].presence || "application/octet-stream"
         )
 
-        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
       end
     end
 
-    def attach_raw_email(artifact, payload)
+    def attach_raw_email(attachment, payload)
       raw_email = payload["RawEmail"]
       return if raw_email.blank?
 
-      artifact.raw_email.attach(
+      attachment.raw_email.attach(
         io: StringIO.new(raw_email),
-        filename: "raw-email-#{artifact.id}.eml",
+        filename: "raw-email-#{attachment.id}.eml",
         content_type: "message/rfc822"
       )
     end

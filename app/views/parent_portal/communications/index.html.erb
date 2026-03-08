@@ -30,6 +30,7 @@
     <thead>
       <tr>
         <th>Title</th>
+        <th>File</th>
         <th>Child</th>
         <th>From</th>
         <th>Status</th>
@@ -37,13 +38,20 @@
       </tr>
     </thead>
     <tbody>
-      <% @artifacts.each do |artifact| %>
+      <% @attachments.each do |attachment| %>
         <tr>
-          <td><%= link_to(artifact.display_title, parent_communication_path(artifact)) %></td>
-          <td><%= artifact.child.name %></td>
-          <td><%= artifact.from_email.presence || "-" %></td>
-          <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
-          <td><%= artifact.occurred_at&.strftime("%Y-%m-%d %H:%M") || artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          <td><%= link_to(attachment.display_title, parent_communication_path(attachment)) %></td>
+          <td>
+            <% if attachment.primary_file_type.present? %>
+              <span class="file-icon <%= attachment.primary_file_type_css %>"><%= attachment.primary_file_type %></span>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td><%= attachment.child.name %></td>
+          <td><%= attachment.from_email.presence || "-" %></td>
+          <td><span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span></td>
+          <td><%= attachment.occurred_at&.strftime("%Y-%m-%d %H:%M") || attachment.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
         </tr>
       <% end %>
     </tbody>

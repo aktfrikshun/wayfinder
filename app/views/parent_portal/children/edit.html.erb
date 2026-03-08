@@ -52,18 +52,18 @@
   <div class="page-head" style="margin-bottom: 0.5rem;">
     <div>
       <h3>Insights</h3>
-      <p class="muted">Clear and rebuild insights from all communications and artifacts.</p>
+      <p class="muted">Clear and rebuild insights from all communications and attachments.</p>
     </div>
     <%= button_to "Regenerate Insights", regenerate_insights_parent_child_path(@child), method: :post, class: "btn btn-primary" %>
   </div>
-  <p class="muted">Existing insights will be cleared, then AI extraction will re-run for every communication and artifact for <%= @child.name %>.</p>
+  <p class="muted">Existing insights will be cleared, then AI extraction will re-run for every communication and attachment for <%= @child.name %>.</p>
 </section>
 
 <section class="card" style="margin-top: 1rem;">
   <div class="page-head" style="margin-bottom: 0.75rem;">
     <div>
       <h3>Your Communications For <%= @child.name %></h3>
-      <p class="muted">You can edit communications you are involved in and manage their artifacts.</p>
+      <p class="muted">You can edit communications you are involved in and manage their attachments.</p>
     </div>
     <%= link_to "Add Communication", new_parent_child_communication_path(@child), class: "btn btn-primary" %>
   </div>
@@ -76,7 +76,7 @@
             <th>Subject</th>
             <th>Correspondents</th>
             <th>Received</th>
-            <th>Artifacts</th>
+            <th>Attachments</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -86,11 +86,11 @@
               <td><%= communication.subject.presence || "(No Subject)" %></td>
               <td><%= communication.correspondents.map(&:display_name).join(", ") %></td>
               <td><%= communication.received_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
-              <td><%= communication.artifacts.count %></td>
+              <td><%= communication.attachments.count %></td>
               <td>
                 <div class="inline-actions">
                   <%= link_to "Edit", edit_parent_child_communication_path(@child, communication), class: "btn" %>
-                  <%= button_to "Delete", parent_child_communication_path(@child, communication), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this communication and its artifacts?" } } %>
+                  <%= button_to "Delete", parent_child_communication_path(@child, communication), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this communication and its attachments?" } } %>
                 </div>
               </td>
             </tr>

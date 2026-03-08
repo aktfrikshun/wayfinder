@@ -1,11 +1,11 @@
 require "rails_helper"
 
-RSpec.describe "Child artifacts API", type: :request do
-  it "returns latest 50 artifacts ordered by occurred_at then captured_at" do
+RSpec.describe "Child attachments API", type: :request do
+  it "returns latest 50 attachments ordered by occurred_at then captured_at" do
     child = create(:child)
-    create_list(:artifact, 55, child: child)
+    create_list(:attachment, 55, child: child)
 
-    get "/children/#{child.id}/artifacts"
+    get "/children/#{child.id}/attachments"
 
     expect(response).to have_http_status(:ok)
     payload = JSON.parse(response.body)

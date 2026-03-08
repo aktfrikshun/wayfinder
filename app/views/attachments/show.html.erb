@@ -1,0 +1,50 @@
+<div class="page-head">
+  <div>
+    <h1><%= @attachment.display_title %></h1>
+    <p><%= @attachment.child.name %> · <%= @attachment.source_type %> / <%= @attachment.content_type %></p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Edit", edit_attachment_path(@attachment), class: "btn" %>
+    <%= link_to "Back", attachments_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h3>Attachment Details</h3>
+    <p><strong>Description:</strong> <%= @attachment.description.presence || "-" %></p>
+    <p><strong>Category:</strong> <%= @attachment.effective_category.presence || "-" %></p>
+    <p><strong>AI Status:</strong> <span class="badge badge-<%= @attachment.ai_status %>"><%= @attachment.ai_status %></span></p>
+    <p><strong>Processing State:</strong> <%= @attachment.processing_state %></p>
+    <p><strong>Occurred:</strong> <%= @attachment.occurred_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>Captured:</strong> <%= @attachment.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></p>
+    <p><strong>From:</strong> <%= @attachment.from_name.presence || "-" %> &lt;<%= @attachment.from_email.presence || "-" %>&gt;</p>
+    <p><strong>Files:</strong>
+      <% if @attachment.files.attached? %>
+        <%= @attachment.files.map { |file| file.filename.to_s }.join(", ") %>
+      <% else %>
+        -
+      <% end %>
+    </p>
+  </section>
+
+  <section class="card">
+    <h3>Extraction</h3>
+    <p><strong>Method:</strong> <%= @attachment.text_extraction_method.presence || "-" %></p>
+    <p><strong>Quality Score:</strong> <%= @attachment.text_quality_score.presence || "-" %></p>
+    <p><strong>AI Error:</strong> <%= @attachment.ai_error.presence || "None" %></p>
+    <p><strong>Tags:</strong> <%= (@attachment.tags || []).join(", ").presence || "-" %></p>
+  </section>
+</div>
+
+<div class="grid grid-2" style="margin-top: 1rem;">
+  <section class="card">
+    <h3>Normalized Text</h3>
+    <pre style="white-space: pre-wrap;"><%= @attachment.normalized_text.presence || @attachment.body_text.presence || "-" %></pre>
+  </section>
+
+  <section class="card">
+    <h3>Extracted Payload</h3>
+    <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@attachment.extracted_payload || {}) %></pre>
+  </section>
+</div>

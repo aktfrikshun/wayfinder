@@ -1,7 +1,7 @@
 <div class="page-head">
   <div>
     <h1>Edit Communication</h1>
-    <p><%= @child.name %> · Manage communication details and associated artifacts.</p>
+    <p><%= @child.name %> · Manage communication details and associated attachments.</p>
   </div>
   <div class="inline-actions">
     <%= button_to "Reprocess AI", reprocess_parent_child_communication_path(@child, @communication), method: :post, class: "btn btn-primary" %>
@@ -15,16 +15,21 @@
 <section class="card" style="margin-bottom: 1rem;">
   <div class="page-head" style="margin-bottom: 0.75rem;">
     <div>
-      <h3>Add Artifact</h3>
-      <p class="muted">Upload files to create artifacts linked to this communication.</p>
+      <h3>Add Attachment</h3>
+      <p class="muted">Upload files to create attachments linked to this communication.</p>
     </div>
   </div>
 
-  <%= form_with model: @new_artifact, url: artifacts_parent_child_communication_path(@child, @communication), method: :post, local: true, multipart: true do |form| %>
+  <%= form_with model: @new_attachment, url: attachments_parent_child_communication_path(@child, @communication), method: :post, local: true, multipart: true do |form| %>
     <div class="form-grid">
       <div>
         <%= form.label :title %>
         <%= form.text_field :title, placeholder: "Attachment title" %>
+      </div>
+
+      <div>
+        <%= form.label :description, "Description / Context" %>
+        <%= form.text_field :description, placeholder: "What is this file about?" %>
       </div>
 
       <div>
@@ -34,12 +39,12 @@
 
       <div>
         <%= form.label :source_type %>
-        <%= form.select :source_type, Artifact::SOURCE_TYPES, selected: "upload" %>
+        <%= form.select :source_type, Attachment::SOURCE_TYPES, selected: "upload" %>
       </div>
 
       <div>
         <%= form.label :content_type %>
-        <%= form.select :content_type, Artifact::CONTENT_TYPES, selected: "unknown" %>
+        <%= form.select :content_type, Attachment::CONTENT_TYPES, selected: "unknown" %>
       </div>
 
       <div class="full">
@@ -49,24 +54,25 @@
 
       <div class="full">
         <%= form.label :body_text, "Optional note" %>
-        <%= form.text_area :body_text, placeholder: "Optional context for this artifact" %>
+        <%= form.text_area :body_text, placeholder: "Optional context for this attachment" %>
       </div>
     </div>
 
     <div class="toolbar" style="margin-top: 1rem;">
-      <%= form.submit "Upload Artifact", class: "btn btn-primary" %>
+      <%= form.submit "Upload Attachment", class: "btn btn-primary" %>
     </div>
   <% end %>
 </section>
 
 <section class="card">
-  <h3>Associated Artifacts</h3>
-  <% if @artifacts.any? %>
+  <h3>Associated Attachments</h3>
+  <% if @attachments.any? %>
     <div class="table-wrap">
       <table class="table">
         <thead>
           <tr>
             <th>Title</th>
+            <th>File</th>
             <th>Type</th>
             <th>Status</th>
             <th>Files</th>
@@ -74,16 +80,23 @@
           </tr>
         </thead>
         <tbody>
-          <% @artifacts.each do |artifact| %>
+          <% @attachments.each do |attachment| %>
             <tr>
-              <td><%= artifact.display_title %></td>
-              <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
-              <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
-              <td><%= artifact.files.count %></td>
+              <td><%= attachment.display_title %></td>
+              <td>
+                <% if attachment.primary_file_type.present? %>
+                  <span class="file-icon <%= attachment.primary_file_type_css %>"><%= attachment.primary_file_type %></span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td><%= attachment.source_type %> / <%= attachment.content_type %></td>
+              <td><span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span></td>
+              <td><%= attachment.files.count %></td>
               <td>
                 <div class="inline-actions">
-                  <%= link_to "View", parent_communication_path(artifact), class: "btn" %>
-                  <%= button_to "Remove", artifact_parent_child_communication_path(@child, @communication, artifact_id: artifact.id), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Remove this artifact?" } } %>
+                  <%= link_to "View", parent_communication_path(attachment), class: "btn" %>
+                  <%= button_to "Remove", attachment_parent_child_communication_path(@child, @communication, attachment_id: attachment.id), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Remove this attachment?" } } %>
                 </div>
               </td>
             </tr>
@@ -92,6 +105,6 @@
       </table>
     </div>
   <% else %>
-    <p class="muted">No artifacts associated yet.</p>
+    <p class="muted">No attachments associated yet.</p>
   <% end %>
 </section>

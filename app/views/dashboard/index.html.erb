@@ -1,7 +1,7 @@
 <div class="page-head">
   <div>
     <h1>Command Center</h1>
-    <p>Search and manage parents, children, artifacts, users, and legacy communications in one place.</p>
+    <p>Search and manage parents, children, attachments, users, and legacy communications in one place.</p>
   </div>
 </div>
 
@@ -17,10 +17,10 @@
     <p class="muted">Profiles tracked</p>
   </section>
   <section class="card">
-    <h3>Artifacts</h3>
-    <div class="metric"><%= @artifacts_count %></div>
+    <h3>Attachments</h3>
+    <div class="metric"><%= @attachments_count %></div>
     <p class="muted">Source records captured</p>
-    <p><%= link_to "Open Artifact Management", artifacts_path, class: "btn" %></p>
+    <p><%= link_to "Open Attachment Management", attachments_path, class: "btn" %></p>
   </section>
   <section class="card">
     <h3>Communications</h3>
@@ -72,13 +72,13 @@
     </section>
 
     <section class="card">
-      <h3>Artifact Matches</h3>
-      <% if @artifacts_results.present? %>
-        <% @artifacts_results.each do |artifact| %>
-          <p><%= link_to(artifact.display_title, artifact_path(artifact)) %> · <span class="muted"><%= artifact.effective_category.presence || artifact.content_type %></span></p>
+      <h3>Attachment Matches</h3>
+      <% if @attachments_results.present? %>
+        <% @attachments_results.each do |attachment| %>
+          <p><%= link_to(attachment.display_title, attachment_path(attachment)) %> · <span class="muted"><%= attachment.effective_category.presence || attachment.content_type %></span></p>
         <% end %>
       <% else %>
-        <p class="muted">No artifact matches.</p>
+        <p class="muted">No attachment matches.</p>
       <% end %>
     </section>
 
@@ -108,8 +108,8 @@
 
 <section class="card" style="margin-bottom: 1rem;">
   <div class="page-head" style="margin-bottom: 0.75rem;">
-    <h3>Recent Artifacts</h3>
-    <%= link_to "Open Artifact Management", artifacts_path, class: "btn" %>
+    <h3>Recent Attachments</h3>
+    <%= link_to "Open Attachment Management", attachments_path, class: "btn" %>
   </div>
 
   <div class="table-wrap">
@@ -125,14 +125,14 @@
         </tr>
       </thead>
       <tbody>
-        <% @recent_artifacts.each do |artifact| %>
+        <% @recent_attachments.each do |attachment| %>
           <tr>
-            <td><%= link_to artifact.display_title, artifact_path(artifact) %></td>
-            <td><%= artifact.child.name %></td>
-            <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
-            <td><%= artifact.effective_category.presence || "-" %></td>
-            <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
-            <td><%= artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+            <td><%= link_to attachment.display_title, attachment_path(attachment) %></td>
+            <td><%= attachment.child.name %></td>
+            <td><%= attachment.source_type %> / <%= attachment.content_type %></td>
+            <td><%= attachment.effective_category.presence || "-" %></td>
+            <td><span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span></td>
+            <td><%= attachment.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
           </tr>
         <% end %>
       </tbody>

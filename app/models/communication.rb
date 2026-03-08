@@ -2,7 +2,7 @@ class Communication < ApplicationRecord
   AI_STATUSES = %w[pending processing complete failed].freeze
 
   belongs_to :child
-  has_many :artifacts, dependent: :destroy
+  has_many :attachments, class_name: "Attachment", dependent: :destroy, inverse_of: :communication
   has_many :communication_correspondents, class_name: "CommunicationContact", dependent: :destroy
   has_many :correspondents, through: :communication_correspondents, source: :contact
 
@@ -34,4 +34,5 @@ class Communication < ApplicationRecord
   def display_title
     subject.presence || "Communication ##{id || 'new'}"
   end
+
 end

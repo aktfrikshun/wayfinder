@@ -1,7 +1,7 @@
 module ParentPortal
   class ChildCommunicationsController < BaseController
     before_action :set_child
-    before_action :set_communication, only: %i[show edit update destroy create_artifact destroy_artifact reprocess]
+    before_action :set_communication, only: %i[show edit update destroy create_attachment destroy_attachment reprocess]
 
     def new
       @communication = @child.communications.new(
@@ -31,12 +31,12 @@ module ParentPortal
     end
 
     def show
-      @artifacts = @communication.artifacts.recent_first
+      @attachments = @communication.attachments.recent_first
     end
 
     def edit
-      @artifacts = @communication.artifacts.recent_first
-      @new_artifact = @communication.artifacts.new(
+      @attachments = @communication.attachments.recent_first
+      @new_attachment = @communication.attachments.new(
         child: @child,
         source_type: "upload",
         content_type: "unknown",
@@ -55,8 +55,8 @@ module ParentPortal
       if @communication.update(attrs)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Communication updated."
       else
-        @artifacts = @communication.artifacts.recent_first
-        @new_artifact = @communication.artifacts.new(child: @child)
+        @attachments = @communication.attachments.recent_first
+        @new_attachment = @communication.attachments.new(child: @child)
         render :edit, status: :unprocessable_entity
       end
     end
@@ -66,41 +66,41 @@ module ParentPortal
       redirect_to edit_parent_child_path(@child), notice: "Communication deleted."
     end
 
-    def create_artifact
-      attrs = artifact_params
+    def create_attachment
+      attrs = attachment_params
       files = attrs.delete(:files)
 
-      artifact = @communication.artifacts.new(attrs)
-      artifact.child = @child
-      artifact.source_type ||= "upload"
-      artifact.captured_at ||= Time.current
-      artifact.occurred_at ||= Time.current
-      artifact.processing_state ||= "pending"
-      artifact.ai_status ||= "pending"
-      artifact.content_type = infer_content_type(files, artifact.content_type)
+      attachment = @communication.attachments.new(attrs)
+      attachment.child = @child
+      attachment.source_type ||= "upload"
+      attachment.captured_at ||= Time.current
+      attachment.occurred_at ||= Time.current
+      attachment.processing_state ||= "pending"
+      attachment.ai_status ||= "pending"
+      attachment.content_type = infer_content_type(files, attachment.content_type)
 
-      if artifact.save
-        artifact.files.attach(files) if files.present?
-        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
-        redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Artifact uploaded."
+      if attachment.save
+        attachment.files.attach(files) if files.present?
+        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
+        redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Attachment uploaded."
       else
-        @communication.errors.add(:base, artifact.errors.full_messages.to_sentence)
-        @artifacts = @communication.artifacts.recent_first
-        @new_artifact = artifact
+        @communication.errors.add(:base, attachment.errors.full_messages.to_sentence)
+        @attachments = @communication.attachments.recent_first
+        @new_attachment = attachment
         render :edit, status: :unprocessable_entity
       end
     end
 
-    def destroy_artifact
-      artifact = @communication.artifacts.find(params[:artifact_id])
-      artifact.destroy
-      redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Artifact removed."
+    def destroy_attachment
+      attachment = @communication.attachments.find(params[:attachment_id])
+      attachment.destroy
+      redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Attachment removed."
     end
 
     def reprocess
       AI::ExtractCommunicationJob.perform_later(@communication.id)
-      @communication.artifacts.find_each do |artifact|
-        Artifacts::ProcessArtifactJob.perform_later(artifact.id)
+      @communication.attachments.find_each do |attachment|
+        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
       end
 
       redirect_back fallback_location: parent_child_communication_path(@child, @communication), notice: "Reprocessing queued."
@@ -133,9 +133,18 @@ module ParentPortal
       )
     end
 
-    def artifact_params
-      params.require(:artifact).permit(
+    def attachment_params
+      raw_params = params[:attachment]
+      permitted_source =
+        if raw_params.is_a?(ActionController::Parameters)
+          raw_params
+        else
+          ActionController::Parameters.new(raw_params || {})
+        end
+
+      permitted_source.permit(
         :title,
+        :description,
         :subject,
         :body_text,
         :body_html,

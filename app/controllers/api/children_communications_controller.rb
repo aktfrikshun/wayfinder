@@ -2,9 +2,9 @@ module Api
   class ChildrenCommunicationsController < ApplicationController
     def index
       child = Child.find(params[:id])
-      artifacts = child.artifacts.recent_first.limit(50)
+      attachments = child.attachments.recent_first.limit(50)
 
-      render json: artifacts.map { |artifact| ArtifactSerializer.new(artifact).as_json }
+      render json: attachments.map { |attachment| AttachmentSerializer.new(attachment).as_json }
     end
   end
 end

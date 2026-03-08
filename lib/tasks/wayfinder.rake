@@ -1,10 +1,10 @@
 namespace :wayfinder do
-  desc "Migrate Communication rows to Artifact rows"
-  task migrate_communications_to_artifacts: :environment do
+  desc "Migrate Communication rows to Attachment rows"
+  task migrate_communications_to_attachments: :environment do
     migrated = 0
 
     Communication.find_each do |communication|
-      Artifact.find_or_create_by!(
+      Attachment.find_or_create_by!(
         communication_id: communication.id,
         child_id: communication.child_id,
         source_type: "email",
@@ -18,18 +18,18 @@ namespace :wayfinder do
         body_text: communication.body_text,
         body_html: communication.body_html,
         raw_payload: communication.raw_payload || {}
-      ) do |artifact|
-        artifact.title = communication.subject.presence || "Inbound Email"
-        artifact.extracted_payload = communication.ai_extracted || {}
-        artifact.ai_status = communication.ai_status
-        artifact.ai_raw_response = communication.ai_raw_response || {}
-        artifact.ai_error = communication.ai_error
-        artifact.system_category = "school_communication"
+      ) do |attachment|
+        attachment.title = communication.subject.presence || "Inbound Email"
+        attachment.extracted_payload = communication.ai_extracted || {}
+        attachment.ai_status = communication.ai_status
+        attachment.ai_raw_response = communication.ai_raw_response || {}
+        attachment.ai_error = communication.ai_error
+        attachment.system_category = "school_communication"
       end
 
       migrated += 1
     end
 
-    puts "Migrated #{migrated} communication record(s) to artifacts."
+    puts "Migrated #{migrated} communication record(s) to attachments."
   end
 end

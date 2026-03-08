@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_08_152000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,7 +42,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "artifacts", force: :cascade do |t|
+  create_table "attachments", force: :cascade do |t|
     t.text "ai_error"
     t.jsonb "ai_raw_response", default: {}, null: false
     t.string "ai_status", default: "pending", null: false
@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
     t.bigint "communication_id", null: false
     t.string "content_type", null: false
     t.datetime "created_at", null: false
+    t.text "description"
     t.jsonb "extracted_payload", default: {}, null: false
     t.integer "extraction_version", default: 1, null: false
     t.string "from_email"
@@ -78,18 +79,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "user_category"
-    t.index ["ai_status"], name: "index_artifacts_on_ai_status"
-    t.index ["captured_at"], name: "index_artifacts_on_captured_at"
-    t.index ["child_id"], name: "index_artifacts_on_child_id"
-    t.index ["communication_id"], name: "index_artifacts_on_communication_id"
-    t.index ["content_type"], name: "index_artifacts_on_content_type"
-    t.index ["extracted_payload"], name: "index_artifacts_on_extracted_payload", using: :gin
-    t.index ["metadata"], name: "index_artifacts_on_metadata", using: :gin
-    t.index ["occurred_at"], name: "index_artifacts_on_occurred_at"
-    t.index ["processing_state"], name: "index_artifacts_on_processing_state"
-    t.index ["source_type"], name: "index_artifacts_on_source_type"
-    t.index ["system_category"], name: "index_artifacts_on_system_category"
-    t.index ["tags"], name: "index_artifacts_on_tags", using: :gin
+    t.index ["ai_status"], name: "index_attachments_on_ai_status"
+    t.index ["captured_at"], name: "index_attachments_on_captured_at"
+    t.index ["child_id"], name: "index_attachments_on_child_id"
+    t.index ["communication_id"], name: "index_attachments_on_communication_id"
+    t.index ["content_type"], name: "index_attachments_on_content_type"
+    t.index ["extracted_payload"], name: "index_attachments_on_extracted_payload", using: :gin
+    t.index ["metadata"], name: "index_attachments_on_metadata", using: :gin
+    t.index ["occurred_at"], name: "index_attachments_on_occurred_at"
+    t.index ["processing_state"], name: "index_attachments_on_processing_state"
+    t.index ["source_type"], name: "index_attachments_on_source_type"
+    t.index ["system_category"], name: "index_attachments_on_system_category"
+    t.index ["tags"], name: "index_attachments_on_tags", using: :gin
   end
 
   create_table "children", force: :cascade do |t|
@@ -159,7 +160,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
   end
 
   create_table "insights", force: :cascade do |t|
-    t.bigint "artifact_id", null: false
+    t.bigint "attachment_id", null: false
     t.text "body"
     t.bigint "child_id", null: false
     t.float "confidence"
@@ -169,7 +170,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
     t.string "status", default: "active", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["artifact_id"], name: "index_insights_on_artifact_id_unique", unique: true
+    t.index ["attachment_id"], name: "index_insights_on_attachment_id_unique", unique: true
     t.index ["child_id"], name: "index_insights_on_child_id"
     t.index ["priority"], name: "index_insights_on_priority"
     t.index ["status"], name: "index_insights_on_status"
@@ -349,15 +350,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_07_130000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "artifacts", "children"
-  add_foreign_key "artifacts", "communications"
+  add_foreign_key "attachments", "children"
+  add_foreign_key "attachments", "communications"
   add_foreign_key "children", "parents"
   add_foreign_key "communication_contacts", "communications"
   add_foreign_key "communication_contacts", "contacts"
   add_foreign_key "communications", "children"
   add_foreign_key "contacts", "families"
   add_foreign_key "contacts", "users"
-  add_foreign_key "insights", "artifacts"
+  add_foreign_key "insights", "attachments"
   add_foreign_key "insights", "children"
   add_foreign_key "parents", "families"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

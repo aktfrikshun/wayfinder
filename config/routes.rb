@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 
   resources :parents
   resources :children
-  resources :artifacts
+  resources :attachments, controller: "attachments"
   resources :communications
   resources :users
   post "users/:id/impersonate", to: "users#impersonate", as: :impersonate_user
@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   post "webhooks/postmark/inbound", to: "webhooks/postmark_inbound#create"
   post "webhooks/postmark/events", to: "webhooks/postmark_events#create"
-  get "children/:id/artifacts", to: "api/children_artifacts#index"
+  get "children/:id/attachments", to: "api/children_attachments#index"
   get "children/:id/communications", to: "api/children_communications#index"
   resource :password_change, only: %i[edit update]
 
@@ -38,8 +38,8 @@ Rails.application.routes.draw do
       post :regenerate_alias, on: :member
       post :regenerate_insights, on: :member
       resources :communications, controller: "child_communications", except: :index do
-        post :artifacts, action: :create_artifact, on: :member
-        delete "artifacts/:artifact_id", action: :destroy_artifact, on: :member, as: :artifact
+        post :attachments, action: :create_attachment, on: :member
+        delete "attachments/:attachment_id", action: :destroy_attachment, on: :member, as: :attachment
         post :reprocess, on: :member
       end
     end

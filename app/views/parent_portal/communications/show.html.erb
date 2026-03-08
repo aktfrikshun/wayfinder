@@ -1,9 +1,14 @@
 <div class="page-head">
   <div>
-    <h1><%= @artifact.display_title %></h1>
-    <p><%= @artifact.child.name %> · <%= @artifact.occurred_at&.strftime("%Y-%m-%d %H:%M") || @artifact.captured_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
+    <h1><%= @attachment.display_title %></h1>
+    <p><%= @attachment.child.name %> · <%= @attachment.occurred_at&.strftime("%Y-%m-%d %H:%M") || @attachment.captured_at&.strftime("%Y-%m-%d %H:%M") || "No timestamp" %></p>
   </div>
   <div class="inline-actions">
+    <% if @attachment.communication.correspondents.exists?(id: current_correspondent.id) %>
+      <%= link_to "Manage Attachments", edit_parent_child_communication_path(@attachment.child, @attachment.communication), class: "btn" %>
+    <% else %>
+      <%= link_to "Manage Child", edit_parent_child_path(@attachment.child), class: "btn" %>
+    <% end %>
     <%= link_to "Back", parent_communications_path, class: "btn" %>
   </div>
 </div>
@@ -11,16 +16,24 @@
 <div class="grid grid-2">
   <section class="card">
     <h3>Message Details</h3>
-    <p><strong>From:</strong> <%= @artifact.from_name.presence || "-" %> &lt;<%= @artifact.from_email.presence || "-" %>&gt;</p>
-    <p><strong>Status:</strong> <span class="badge badge-<%= @artifact.ai_status %>"><%= @artifact.ai_status %></span></p>
-    <p><strong>Source:</strong> <%= @artifact.source.presence || "-" %></p>
-    <p><strong>Category:</strong> <%= @artifact.effective_category.presence || "-" %></p>
+    <p><strong>From:</strong> <%= @attachment.from_name.presence || "-" %> &lt;<%= @attachment.from_email.presence || "-" %>&gt;</p>
+    <p><strong>Status:</strong> <span class="badge badge-<%= @attachment.ai_status %>"><%= @attachment.ai_status %></span></p>
+    <p><strong>Source:</strong> <%= @attachment.source.presence || "-" %></p>
+    <p><strong>Category:</strong> <%= @attachment.effective_category.presence || "-" %></p>
+    <p><strong>Description:</strong> <%= @attachment.description.presence || "-" %></p>
+    <p><strong>File Type:</strong>
+      <% if @attachment.primary_file_type.present? %>
+        <span class="file-icon <%= @attachment.primary_file_type_css %>"><%= @attachment.primary_file_type %></span>
+      <% else %>
+        -
+      <% end %>
+    </p>
   </section>
 
   <section class="card">
     <h3>AI Summary</h3>
-    <% if @artifact.extracted_payload.present? %>
-      <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@artifact.extracted_payload) %></pre>
+    <% if @attachment.extracted_payload.present? %>
+      <pre style="white-space: pre-wrap;"><%= JSON.pretty_generate(@attachment.extracted_payload) %></pre>
     <% else %>
       <p class="muted">No AI extraction available yet.</p>
     <% end %>
@@ -29,5 +42,5 @@
 
 <section class="card" style="margin-top: 1rem;">
   <h3>Body</h3>
-  <p style="white-space: pre-wrap;"><%= @artifact.normalized_text.presence || @artifact.body_text.presence || "No text body" %></p>
+  <p style="white-space: pre-wrap;"><%= @attachment.normalized_text.presence || @attachment.body_text.presence || "No text body" %></p>
 </section>

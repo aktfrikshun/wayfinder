@@ -26,13 +26,14 @@
 </section>
 
 <section class="card">
-  <h3>Artifacts & Extraction</h3>
-  <% if @artifacts.any? %>
+  <h3>Attachments & Extraction</h3>
+  <% if @attachments.any? %>
     <div class="table-wrap">
       <table class="table">
         <thead>
           <tr>
             <th>Title</th>
+            <th>File</th>
             <th>Type</th>
             <th>AI Status</th>
             <th>Files</th>
@@ -40,15 +41,27 @@
           </tr>
         </thead>
         <tbody>
-          <% @artifacts.each do |artifact| %>
+          <% @attachments.each do |attachment| %>
             <tr>
-              <td><%= artifact.display_title %></td>
-              <td><%= artifact.source_type %> / <%= artifact.content_type %></td>
-              <td><span class="badge badge-<%= artifact.ai_status %>"><%= artifact.ai_status %></span></td>
-              <td><%= artifact.files.map(&:filename).join(", ") %></td>
+              <td><%= attachment.display_title %></td>
               <td>
-                <% if artifact.extracted_payload.present? %>
-                  <pre style="max-height: 200px; overflow: auto;"><%= JSON.pretty_generate(artifact.extracted_payload) %></pre>
+                <% if attachment.primary_file_type.present? %>
+                  <span class="file-icon <%= attachment.primary_file_type_css %>"><%= attachment.primary_file_type %></span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td><%= attachment.source_type %> / <%= attachment.content_type %></td>
+              <td><span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span></td>
+              <td>
+                <%= attachment.files.map(&:filename).join(", ") %>
+                <% if attachment.description.present? %>
+                  <p class="muted" style="margin: 0.35rem 0 0;"> <%= attachment.description %></p>
+                <% end %>
+              </td>
+              <td>
+                <% if attachment.extracted_payload.present? %>
+                  <pre style="max-height: 200px; overflow: auto;"><%= JSON.pretty_generate(attachment.extracted_payload) %></pre>
                 <% else %>
                   <span class="muted">No AI payload</span>
                 <% end %>
@@ -59,6 +72,6 @@
       </table>
     </div>
   <% else %>
-    <p class="muted">No artifacts associated yet.</p>
+    <p class="muted">No attachments associated yet.</p>
   <% end %>
 </section>

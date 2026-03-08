@@ -15,13 +15,17 @@ class CommunicationsController < ApplicationController
     )
   end
 
-  def show; end
+  def show
+    @attachments = @communication.attachments.recent_first
+  end
 
   def new
     @communication = Communication.new(received_at: Time.current, ai_status: "pending")
   end
 
-  def edit; end
+  def edit
+    @attachments = @communication.attachments.recent_first
+  end
 
   def create
     attrs = prepared_communication_params
@@ -43,6 +47,7 @@ class CommunicationsController < ApplicationController
     if @communication.update(attrs)
       redirect_to @communication, notice: "Communication updated."
     else
+      @attachments = @communication.attachments.recent_first
       render :edit, status: :unprocessable_entity
     end
   end

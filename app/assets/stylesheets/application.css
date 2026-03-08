@@ -259,6 +259,30 @@ label {
 .badge-complete { background: #d6f6e4; color: #0d6a36; }
 .badge-failed { background: #ffe0dc; color: #9f1d1d; }
 
+.file-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.7rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  background: #f3f4f6;
+  color: #364152;
+}
+
+.file-icon-pdf { background: #fee4e2; color: #912018; border-color: #fecdca; }
+.file-icon-img { background: #dff8eb; color: #075b38; border-color: #b7ebd0; }
+.file-icon-txt { background: #e8efff; color: #1d3f91; border-color: #cdddfa; }
+.file-icon-doc { background: #e6f4ff; color: #175cd3; border-color: #cbe8ff; }
+.file-icon-xls { background: #dcfae6; color: #067647; border-color: #abefc6; }
+.file-icon-ppt { background: #ffead5; color: #9c2a10; border-color: #ffd6ae; }
+.file-icon-generic { background: #f2f4f7; color: #344054; border-color: #d0d5dd; }
+
 .flash {
   margin-bottom: 1rem;
   border-radius: var(--radius-sm);

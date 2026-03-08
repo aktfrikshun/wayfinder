@@ -1,6 +1,6 @@
 class Insight < ApplicationRecord
   belongs_to :child
-  belongs_to :artifact
+  belongs_to :attachment, inverse_of: :insights
 
   STATUSES = %w[active archived].freeze
   PRIORITIES = %w[low medium high].freeze

@@ -5,6 +5,8 @@
   </div>
   <div class="inline-actions">
     <%= link_to "Edit", edit_communication_path(@communication), class: "btn" %>
+    <%= link_to "Manage Attachments", attachments_path(communication_id: @communication.id), class: "btn" %>
+    <%= link_to "Add Attachment", new_attachment_path(communication_id: @communication.id), class: "btn" %>
     <%= link_to "Back", communications_path, class: "btn" %>
   </div>
 </div>
@@ -27,3 +29,41 @@
     <pre><%= JSON.pretty_generate(@communication.ai_extracted || {}) %></pre>
   </section>
 </div>
+
+<section class="card" style="margin-top: 1rem;">
+  <h3>Attachments</h3>
+  <% if @attachments.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>File</th>
+            <th>Status</th>
+            <th>Captured</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @attachments.each do |attachment| %>
+            <tr>
+              <td><%= link_to attachment.display_title, attachment_path(attachment) %></td>
+              <td>
+                <% if attachment.primary_file_type.present? %>
+                  <span class="file-icon <%= attachment.primary_file_type_css %>"><%= attachment.primary_file_type %></span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td><span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span></td>
+              <td><%= attachment.captured_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+              <td><%= link_to "Edit", edit_attachment_path(attachment), class: "btn" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No attachments associated with this communication.</p>
+  <% end %>
+</section>
