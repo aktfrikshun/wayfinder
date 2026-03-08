@@ -1,6 +1,6 @@
 module ParentPortal
   class ChildrenController < BaseController
-    before_action :set_child, only: %i[show edit update destroy regenerate_alias regenerate_insights]
+    before_action :set_child, only: %i[show edit update destroy regenerate_alias regenerate_insights insights]
     before_action :set_involved_communications, only: :edit
 
     def index
@@ -16,6 +16,11 @@ module ParentPortal
 
     def show
       @recent_attachments = @child.attachments.recent_first.limit(10)
+    end
+
+    def insights
+      @attachments = @child.attachments.includes(:communication).recent_first
+      @insights = @child.insights.includes(:attachment).order(updated_at: :desc)
     end
 
     def new
@@ -51,11 +56,7 @@ module ParentPortal
       @child.insights.delete_all
 
       @child.communications.find_each do |communication|
-        AI::ExtractCommunicationJob.perform_later(communication.id)
-      end
-
-      @child.attachments.find_each do |attachment|
-        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
+        AI::ReprocessCommunicationJob.perform_later(communication.id)
       end
 
       redirect_to edit_parent_child_path(@child), notice: "Insight regeneration queued for all communications and attachments."
@@ -73,7 +74,7 @@ module ParentPortal
     end
 
     def child_params
-      params.require(:child).permit(:name, :grade, :school_name)
+      params.require(:child).permit(:name, :nickname, :birthday, :height, :weight, :grade, :school_name)
     end
 
     def set_involved_communications

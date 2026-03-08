@@ -1,0 +1,79 @@
+<div class="landing-hero">
+  <div class="landing-aurora" aria-hidden="true"></div>
+  <div class="landing-grid">
+    <section>
+      <p class="landing-kicker">Family Learning Intelligence</p>
+      <h1>Understand Your Child's Growth, Not Just Their Grades</h1>
+      <p class="landing-lead">
+        Wayfinder organizes every school message, attachment, and parent observation into one living timeline.
+        It extracts the signal from the noise so families can spot progress, challenges, and next steps early.
+      </p>
+      <div class="landing-actions">
+        <%= link_to "Sign In", new_user_session_path, class: "btn btn-primary" %>
+      </div>
+    </section>
+
+    <aside class="landing-proof card">
+      <h3>Why Parents Use Wayfinder</h3>
+      <ul>
+        <li>Get one coherent record across email, uploads, and notes</li>
+        <li>See AI summaries and key signals without reading every thread</li>
+        <li>Track insight history over time for each child</li>
+        <li>Take action sooner with clearer context for school conversations</li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<section class="card landing-section">
+  <h2>Current Product Features</h2>
+  <div class="landing-columns">
+    <div>
+      <h3>Core Platform</h3>
+      <ul>
+        <li>Role-based access for admins and parents</li>
+        <li>Parent portal with family-scoped child management</li>
+        <li>Child profiles with grade, school context, and inbound alias routing</li>
+        <li>Family invitation flow for shared collaboration</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Communication Capture</h3>
+      <ul>
+        <li>Manual communication creation with description-based editing</li>
+        <li>Inbound Postmark email webhook ingestion</li>
+        <li>Email mapped to child via alias address routing</li>
+        <li>Communication/attachment timeline and parent communication views</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Attachments</h3>
+      <ul>
+        <li>Upload and manage files as attachments from admin and parent flows</li>
+        <li>S3 object storage with family/communication path keys</li>
+        <li>Attachment type icons (PDF, TXT, IMG, DOC, XLS, PPT, generic)</li>
+        <li>Email body persisted as text attachment and raw email stored</li>
+      </ul>
+    </div>
+    <div>
+      <h3>AI + Insights</h3>
+      <ul>
+        <li>Attachment pipeline: shape detection, text extraction, classification, AI extraction</li>
+        <li>OCR path for images (and OCR fallback for weak PDF text)</li>
+        <li>Communication AI extraction using communication + attachment context</li>
+        <li>Automatic reprocessing on communication/attachment create, update, and delete</li>
+        <li>Manual communication reprocess action with ordered attachment-first execution</li>
+        <li>Child insights pages showing extracted attachment payloads and generated insights</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Operations + API</h3>
+      <ul>
+        <li>Admin dashboards for parents, children, communications, attachments, and users</li>
+        <li>Search across key entities and records</li>
+        <li>Impersonation support for admin troubleshooting</li>
+        <li>Child attachments and communications JSON API endpoints</li>
+      </ul>
+    </div>
+  </div>
+</section>

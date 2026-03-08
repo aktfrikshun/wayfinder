@@ -1,0 +1,68 @@
+<div class="page-head">
+  <div>
+    <h1><%= @child.name %> Insights</h1>
+    <p>Attachment AI extraction and child insights.</p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Back to Child", child_path(@child), class: "btn" %>
+  </div>
+</div>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <h3>Child Insights</h3>
+  <% if @insights.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Attachment</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @insights.each do |insight| %>
+            <tr>
+              <td>
+                <strong><%= insight.title %></strong>
+                <div class="muted"><%= insight.body.to_s.truncate(140) %></div>
+              </td>
+              <td><%= insight.priority.presence || "-" %></td>
+              <td><%= insight.status %></td>
+              <td><%= link_to insight.attachment.display_title, attachment_path(insight.attachment) %></td>
+              <td><%= insight.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No insights available yet.</p>
+  <% end %>
+</section>
+
+<section class="card">
+  <h3>Attachment AI Extracted Data</h3>
+  <% if @attachments.any? %>
+    <% @attachments.each do |attachment| %>
+      <article style="padding: 0.75rem 0; border-bottom: 1px solid var(--line);">
+        <div style="display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;">
+          <strong><%= link_to attachment.display_title, attachment_path(attachment) %></strong>
+          <span class="badge badge-<%= attachment.ai_status %>"><%= attachment.ai_status %></span>
+        </div>
+        <p class="muted" style="margin: 0.25rem 0 0.5rem;">
+          <%= attachment.description.presence || "No description" %>
+        </p>
+        <% if attachment.extracted_payload.present? %>
+          <pre style="white-space: pre-wrap; margin: 0;"><%= JSON.pretty_generate(attachment.extracted_payload) %></pre>
+        <% else %>
+          <p class="muted" style="margin: 0;">No extracted payload yet.</p>
+        <% end %>
+      </article>
+    <% end %>
+  <% else %>
+    <p class="muted">No attachments available for this child.</p>
+  <% end %>
+</section>

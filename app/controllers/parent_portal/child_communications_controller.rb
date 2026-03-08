@@ -24,6 +24,7 @@ module ParentPortal
       @communication.correspondents << current_correspondent unless @communication.correspondents.include?(current_correspondent)
 
       if @communication.save
+        AI::ReprocessCommunicationJob.perform_later(@communication.id)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Communication created."
       else
         render :new, status: :unprocessable_entity
@@ -45,6 +46,7 @@ module ParentPortal
 
     def update
       if @communication.update(communication_edit_params)
+        AI::ReprocessCommunicationJob.perform_later(@communication.id)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Communication updated."
       else
         @attachments = @communication.attachments.recent_first
@@ -67,7 +69,7 @@ module ParentPortal
 
       if attachment.save
         attachment.attach_uploaded_files!(files) if files.present?
-        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
+        AI::ReprocessCommunicationJob.perform_later(@communication.id)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Attachment uploaded."
       else
         @communication.errors.add(:base, attachment.errors.full_messages.to_sentence)
@@ -80,14 +82,12 @@ module ParentPortal
     def destroy_attachment
       attachment = @communication.attachments.find(params[:attachment_id])
       attachment.destroy
+      AI::ReprocessCommunicationJob.perform_later(@communication.id)
       redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Attachment removed."
     end
 
     def reprocess
-      AI::ExtractCommunicationJob.perform_later(@communication.id)
-      @communication.attachments.find_each do |attachment|
-        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
-      end
+      AI::ReprocessCommunicationJob.perform_later(@communication.id)
 
       redirect_back fallback_location: parent_child_communication_path(@child, @communication), notice: "Reprocessing queued."
     end

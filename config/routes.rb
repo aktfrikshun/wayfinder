@@ -10,11 +10,14 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  root "dashboard#index"
+  root "home#index"
+  get "dashboard", to: "dashboard#index", as: :dashboard
   get "portal", to: "portal#index"
 
   resources :parents
-  resources :children
+  resources :children do
+    get :insights, on: :member
+  end
   resources :attachments, controller: "attachments"
   resources :communications
   resources :users
@@ -37,6 +40,7 @@ Rails.application.routes.draw do
     resources :children do
       post :regenerate_alias, on: :member
       post :regenerate_insights, on: :member
+      get :insights, on: :member
       resources :communications, controller: "child_communications", except: :index do
         post :attachments, action: :create_attachment, on: :member
         delete "attachments/:attachment_id", action: :destroy_attachment, on: :member, as: :attachment

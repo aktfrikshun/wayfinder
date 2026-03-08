@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Postmark inbound webhook", type: :request do
   before { clear_enqueued_jobs }
 
-  it "creates attachment and enqueues processing job" do
+  it "creates attachment and enqueues ordered communication reprocessing" do
     alias_name = "alias#{SecureRandom.hex(4)}"
     child = create(:child, inbound_alias: alias_name)
 
@@ -22,7 +22,7 @@ RSpec.describe "Postmark inbound webhook", type: :request do
              "CONTENT_TYPE" => "application/json",
              "X-Postmark-Webhook-Token" => "secret"
            }
-    end.to have_enqueued_job(Attachments::ProcessAttachmentJob)
+    end.to have_enqueued_job(AI::ReprocessCommunicationJob)
 
     expect(response).to have_http_status(:ok)
     expect(child.attachments.count).to eq(1)

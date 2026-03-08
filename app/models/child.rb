@@ -1,4 +1,6 @@
 class Child < ApplicationRecord
+  has_paper_trail
+
   belongs_to :parent
   has_many :communications, dependent: :destroy
   has_many :attachments, through: :communications

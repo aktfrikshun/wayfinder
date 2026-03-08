@@ -15,4 +15,16 @@ RSpec.describe Child, type: :model do
 
     expect(child).not_to be_valid
   end
+
+  it "tracks versions with paper trail" do
+    child = create(:child, grade: "4")
+
+    expect { child.update!(grade: "5", nickname: "Champ") }
+      .to change { child.versions.count }.by(1)
+
+    version = child.versions.last
+    expect(version.event).to eq("update")
+    expect(version.object_changes.to_s).to include("grade")
+    expect(version.object_changes.to_s).to include("nickname")
+  end
 end

@@ -34,6 +34,7 @@ class CommunicationsController < ApplicationController
     @communication = Communication.new(attrs)
 
     if @communication.save
+      AI::ReprocessCommunicationJob.perform_later(@communication.id)
       redirect_to @communication, notice: "Communication created."
     else
       render :new, status: :unprocessable_entity
@@ -42,6 +43,7 @@ class CommunicationsController < ApplicationController
 
   def update
     if @communication.update(communication_edit_params)
+      AI::ReprocessCommunicationJob.perform_later(@communication.id)
       redirect_to @communication, notice: "Communication updated."
     else
       @attachments = @communication.attachments.recent_first

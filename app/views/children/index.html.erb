@@ -22,6 +22,8 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th>Nickname</th>
+        <th>Birthday</th>
         <th>Parent</th>
         <th>Grade</th>
         <th>School</th>
@@ -33,6 +35,8 @@
       <% @children.each do |child| %>
         <tr>
           <td><%= link_to child.name, child_path(child) %></td>
+          <td><%= child.nickname.presence || "-" %></td>
+          <td><%= child.birthday&.strftime("%Y-%m-%d") || "-" %></td>
           <td><%= child.parent.email %></td>
           <td><%= child.grade.presence || "-" %></td>
           <td><%= child.school_name.presence || "-" %></td>

@@ -1,6 +1,6 @@
 class ChildrenController < ApplicationController
   before_action :require_admin!
-  before_action :set_child, only: %i[show edit update destroy]
+  before_action :set_child, only: %i[show edit update destroy insights]
 
   def index
     @query = params[:q].to_s.strip
@@ -16,6 +16,11 @@ class ChildrenController < ApplicationController
   end
 
   def show; end
+
+  def insights
+    @attachments = @child.attachments.includes(:communication).recent_first
+    @insights = @child.insights.includes(:attachment).order(updated_at: :desc)
+  end
 
   def new
     @child = Child.new
@@ -53,6 +58,16 @@ class ChildrenController < ApplicationController
   end
 
   def child_params
-    params.require(:child).permit(:parent_id, :name, :grade, :school_name, :inbound_alias)
+    params.require(:child).permit(
+      :parent_id,
+      :name,
+      :nickname,
+      :birthday,
+      :height,
+      :weight,
+      :grade,
+      :school_name,
+      :inbound_alias
+    )
   end
 end

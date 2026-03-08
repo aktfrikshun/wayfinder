@@ -49,8 +49,7 @@ module Webhooks
       attach_raw_email(attachment, payload)
       attach_email_body_text(attachment, payload)
       create_attachment_records(communication, payload, child)
-
-      Attachments::ProcessAttachmentJob.perform_later(attachment.id)
+      AI::ReprocessCommunicationJob.perform_later(communication.id)
 
       render json: { status: "ok" }
     rescue JSON::ParserError
@@ -140,7 +139,6 @@ module Webhooks
           content_type: att["ContentType"].presence || "application/octet-stream"
         )
 
-        Attachments::ProcessAttachmentJob.perform_later(attachment.id)
       end
     end
 

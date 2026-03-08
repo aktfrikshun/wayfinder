@@ -38,6 +38,7 @@ class AttachmentsController < ApplicationController
 
     if @attachment.save
       @attachment.attach_uploaded_files!(files) if files.present?
+      AI::ReprocessCommunicationJob.perform_later(@attachment.communication_id)
       redirect_to @attachment, notice: "Attachment created."
     else
       render :new, status: :unprocessable_entity
@@ -54,6 +55,7 @@ class AttachmentsController < ApplicationController
         @attachment.files.purge
       end
       @attachment.attach_uploaded_files!(files) if files.present?
+      AI::ReprocessCommunicationJob.perform_later(@attachment.communication_id)
       redirect_to @attachment, notice: "Attachment updated."
     else
       render :edit, status: :unprocessable_entity
@@ -61,7 +63,9 @@ class AttachmentsController < ApplicationController
   end
 
   def destroy
+    communication_id = @attachment.communication_id
     @attachment.destroy
+    AI::ReprocessCommunicationJob.perform_later(communication_id)
     redirect_to attachments_path, notice: "Attachment deleted."
   end
 

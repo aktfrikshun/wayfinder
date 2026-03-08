@@ -4,6 +4,7 @@
     <p>Grade <%= @child.grade.presence || "-" %> · <%= @child.school_name.presence || "School not set" %></p>
   </div>
   <div class="inline-actions">
+    <%= link_to "Insights", insights_parent_child_path(@child), class: "btn btn-primary" %>
     <%= link_to "Edit", edit_parent_child_path(@child), class: "btn" %>
     <%= link_to "Back", parent_children_path, class: "btn" %>
   </div>
@@ -13,6 +14,10 @@
   <section class="card">
     <h3>Profile</h3>
     <p><strong>Name:</strong> <%= @child.name %></p>
+    <p><strong>Nickname:</strong> <%= @child.nickname.presence || "-" %></p>
+    <p><strong>Birthday:</strong> <%= @child.birthday&.strftime("%Y-%m-%d") || "-" %></p>
+    <p><strong>Height:</strong> <%= @child.height.presence || "-" %></p>
+    <p><strong>Weight:</strong> <%= @child.weight.presence || "-" %></p>
     <p><strong>Grade:</strong> <%= @child.grade.presence || "-" %></p>
     <p><strong>School:</strong> <%= @child.school_name.presence || "-" %></p>
     <p><strong>Child Code:</strong> <code><%= @child.inbound_alias.presence || "-" %></code></p>
