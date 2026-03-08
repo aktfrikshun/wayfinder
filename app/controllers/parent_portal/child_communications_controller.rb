@@ -38,12 +38,8 @@ module ParentPortal
       @attachments = @communication.attachments.recent_first
       @new_attachment = @communication.attachments.new(
         child: @child,
-        source_type: "upload",
-        content_type: "unknown",
         captured_at: Time.current,
-        occurred_at: Time.current,
-        processing_state: "pending",
-        ai_status: "pending"
+        occurred_at: Time.current
       )
     end
 
@@ -68,15 +64,9 @@ module ParentPortal
 
       attachment = @communication.attachments.new(attrs)
       attachment.child = @child
-      attachment.source_type ||= "upload"
-      attachment.captured_at ||= Time.current
-      attachment.occurred_at ||= Time.current
-      attachment.processing_state ||= "pending"
-      attachment.ai_status ||= "pending"
-      attachment.content_type = infer_content_type(files)
 
       if attachment.save
-        attachment.files.attach(files) if files.present?
+        attachment.attach_uploaded_files!(files) if files.present?
         Attachments::ProcessAttachmentJob.perform_later(attachment.id)
         redirect_to edit_parent_child_communication_path(@child, @communication), notice: "Attachment uploaded."
       else
@@ -135,24 +125,9 @@ module ParentPortal
     end
 
     def attachment_params
-      raw_params = params[:attachment]
-      permitted_source =
-        if raw_params.is_a?(ActionController::Parameters)
-          raw_params
-        else
-          ActionController::Parameters.new(raw_params || {})
-        end
-
-      permitted_source.permit(
+      params.require(:attachment).permit(
         :title,
         :description,
-        :subject,
-        :body_text,
-        :body_html,
-        :source,
-        :source_type,
-        :captured_at,
-        :occurred_at,
         files: []
       )
     end
@@ -161,15 +136,5 @@ module ParentPortal
       Array(files).select { |file| file.respond_to?(:content_type) && file.respond_to?(:original_filename) }
     end
 
-    def infer_content_type(files)
-      file = Array(files).first
-      mime = file&.content_type.to_s
-      return "unknown" if mime.blank?
-      return "image" if mime.start_with?("image/")
-      return "pdf" if mime == "application/pdf"
-      return "document" if mime.start_with?("text/") || mime.include?("word") || mime.include?("officedocument")
-
-      "unknown"
-    end
   end
 end

@@ -47,6 +47,7 @@ module Webhooks
       )
 
       attach_raw_email(attachment, payload)
+      attach_email_body_text(attachment, payload)
       create_attachment_records(communication, payload, child)
 
       Attachments::ProcessAttachmentJob.perform_later(attachment.id)
@@ -133,7 +134,7 @@ module Webhooks
 
         next unless attachment.save
 
-        attachment.files.attach(
+        attachment.attach_file_io!(
           io: StringIO.new(Base64.decode64(att["Content"])),
           filename: att["Name"].presence || "attachment",
           content_type: att["ContentType"].presence || "application/octet-stream"
@@ -147,10 +148,20 @@ module Webhooks
       raw_email = payload["RawEmail"]
       return if raw_email.blank?
 
-      attachment.raw_email.attach(
+      attachment.attach_raw_email_io!(
         io: StringIO.new(raw_email),
-        filename: "raw-email-#{attachment.id}.eml",
-        content_type: "message/rfc822"
+        filename: "raw-email-#{attachment.id}.eml"
+      )
+    end
+
+    def attach_email_body_text(attachment, payload)
+      body_text = payload["TextBody"].presence || payload["HtmlBody"].presence
+      return if body_text.blank?
+
+      attachment.attach_file_io!(
+        io: StringIO.new(body_text),
+        filename: "email-body-#{attachment.id}.txt",
+        content_type: "text/plain"
       )
     end
 

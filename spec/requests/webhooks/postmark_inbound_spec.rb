@@ -29,6 +29,10 @@ RSpec.describe "Postmark inbound webhook", type: :request do
     attachment = child.attachments.last
     expect(attachment.source_type).to eq("email")
     expect(attachment.content_type).to eq("message")
+    expect(attachment.files).to be_attached
+    expect(attachment.files.first.filename.to_s).to start_with("email-body-")
+    expect(attachment.files.first.filename.to_s).to end_with(".txt")
+    expect(attachment.files.first.blob.content_type).to eq("text/plain")
   end
 
   it "returns unauthorized for invalid token" do

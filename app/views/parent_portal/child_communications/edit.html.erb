@@ -32,24 +32,9 @@
         <%= form.text_field :description, placeholder: "What is this file about?" %>
       </div>
 
-      <div>
-        <%= form.label :subject %>
-        <%= form.text_field :subject, placeholder: @communication.subject %>
-      </div>
-
-      <div>
-        <%= form.label :source_type %>
-        <%= form.select :source_type, Attachment::SOURCE_TYPES, selected: "upload" %>
-      </div>
-
       <div class="full">
         <%= form.label :files, "Files" %>
         <%= form.file_field :files, multiple: true %>
-      </div>
-
-      <div class="full">
-        <%= form.label :body_text, "Optional note" %>
-        <%= form.text_area :body_text, placeholder: "Optional context for this attachment" %>
       </div>
     </div>
 
