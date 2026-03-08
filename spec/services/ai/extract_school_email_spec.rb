@@ -9,6 +9,16 @@ RSpec.describe AI::ExtractSchoolEmail, type: :service do
       child: communication.child,
       title: "Report Card",
       description: "Q2 teacher report",
+      metadata: {
+        "tabular_data" => {
+          "detected" => true,
+          "school_year" => "2025-2026",
+          "period_columns" => %w[q1 q2],
+          "header" => ["course", "q1", "q2"],
+          "rows" => [{ "course" => "Math", "q1" => "97", "q2" => "92" }],
+          "row_count" => 1
+        }
+      },
       normalized_text: "Student is improving in reading fluency."
     )
     attachment.attach_file_io!(
@@ -39,7 +49,11 @@ RSpec.describe AI::ExtractSchoolEmail, type: :service do
           "Report Card",
           "Q2 teacher report",
           "Student is improving in reading fluency.",
-          "report.txt (text/plain)"
+          "report.txt (text/plain)",
+          "Tabular Data JSON",
+          "\"school_year\": \"2025-2026\"",
+          "\"period_columns\": [",
+          "\"course\": \"Math\""
         )
       )
     ).and_return(expected)

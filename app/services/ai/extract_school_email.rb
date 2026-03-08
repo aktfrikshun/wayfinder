@@ -58,7 +58,7 @@ module AI
     private
 
     def system_prompt
-      "You extract structured insights from school communications for parents. Respond only with valid JSON."
+      "You extract structured insights from school communications for parents. Preserve school year and quarter/period labels for all academic metrics. Respond only with valid JSON."
     end
 
     def user_prompt
@@ -87,6 +87,7 @@ module AI
       attachments.map.with_index(1) do |attachment, idx|
         file_list = attachment.files.map { |file| "#{file.filename} (#{file.blob&.content_type || "unknown"})" }
         extracted_text = attachment.normalized_text.presence || attachment.body_text.presence || "(no extracted text)"
+        tabular_data = attachment.metadata.to_h["tabular_data"] || attachment.extracted_payload.to_h["tabular_data"]
 
         <<~BLOCK
           Attachment #{idx}:
@@ -96,8 +97,23 @@ module AI
           - Files: #{file_list.presence&.join(", ") || "(none)"}
           - Extracted File/Text Content:
           #{truncate_for_prompt(extracted_text)}
+          - Tabular Data JSON:
+          #{truncate_for_prompt(JSON.pretty_generate(compact_tabular_payload(tabular_data)), max_chars: 2_500)}
         BLOCK
       end.join("\n")
+    end
+
+    def compact_tabular_payload(tabular_data)
+      return { "detected" => false } unless tabular_data.is_a?(Hash) && tabular_data["detected"] == true
+
+      {
+        "detected" => true,
+        "school_year" => tabular_data["school_year"],
+        "period_columns" => tabular_data["period_columns"],
+        "header" => tabular_data["header"],
+        "row_count" => tabular_data["row_count"],
+        "rows" => Array(tabular_data["rows"]).first(30)
+      }
     end
 
     def truncate_for_prompt(text, max_chars: 4_000)

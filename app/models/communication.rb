@@ -1,5 +1,6 @@
 class Communication < ApplicationRecord
   AI_STATUSES = %w[pending processing complete failed].freeze
+  CHAT_SOURCE = "agent_chat"
 
   belongs_to :child
   has_many :attachments, class_name: "Attachment", dependent: :destroy, inverse_of: :communication
@@ -33,6 +34,27 @@ class Communication < ApplicationRecord
 
   def display_title
     subject.presence || "Communication ##{id || 'new'}"
+  end
+
+  def agent_chat?
+    source == CHAT_SOURCE
+  end
+
+  def chat_messages
+    Array(raw_payload.to_h["chat_messages"]).select { |entry| entry.is_a?(Hash) }
+  end
+
+  def append_chat_message!(role:, content:, references: nil, warning: nil, at: Time.current)
+    entry = {
+      "role" => role.to_s,
+      "content" => content.to_s,
+      "at" => at.iso8601
+    }
+    entry["references"] = references if references.present?
+    entry["warning"] = warning if warning.present?
+
+    updated_messages = chat_messages + [entry]
+    update!(raw_payload: raw_payload.to_h.merge("chat_messages" => updated_messages))
   end
 
 end

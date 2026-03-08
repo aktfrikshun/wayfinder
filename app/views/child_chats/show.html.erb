@@ -1,0 +1,50 @@
+<div class="page-head">
+  <div>
+    <h1><%= @chat.display_title %></h1>
+    <p><%= @child.name %> · Chat session</p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "All Chats", child_chats_path(@child), class: "btn" %>
+    <%= link_to "Back to Child", child_path(@child), class: "btn" %>
+  </div>
+</div>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <h3>Conversation</h3>
+  <% if @messages.any? %>
+    <% @messages.each do |msg| %>
+      <article style="padding: 0.7rem 0; border-bottom: 1px solid var(--line);">
+        <p style="margin: 0 0 0.35rem;"><strong><%= msg["role"].to_s.capitalize %></strong> · <span class="muted"><%= msg["at"] %></span></p>
+        <p style="margin: 0; white-space: pre-wrap;"><%= msg["content"] %></p>
+        <% if msg["references"].is_a?(Array) && msg["references"].any? %>
+          <p class="muted" style="margin: 0.4rem 0 0;">References:</p>
+          <ul>
+            <% msg["references"].each do |ref| %>
+              <li><a href="<%= ref["url"] %>" target="_blank" rel="noopener"><%= ref["title"] %></a></li>
+            <% end %>
+          </ul>
+        <% end %>
+        <% if msg["warning"].present? %>
+          <p class="muted" style="margin: 0.45rem 0 0;"><em><%= msg["warning"] %></em></p>
+        <% end %>
+      </article>
+    <% end %>
+  <% else %>
+    <p class="muted">No messages yet.</p>
+  <% end %>
+</section>
+
+<section class="card">
+  <h3>Ask a Question</h3>
+  <%= form_with url: messages_child_chat_path(@child, @chat), method: :post, local: true do |form| %>
+    <div class="form-grid">
+      <div class="full">
+        <%= form.label :question, "Question" %>
+        <%= form.text_area :question, placeholder: "What should we focus on to help with reading and confidence this quarter?" %>
+      </div>
+    </div>
+    <div class="toolbar" style="margin-top: 0.8rem;">
+      <%= form.submit "Send", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>

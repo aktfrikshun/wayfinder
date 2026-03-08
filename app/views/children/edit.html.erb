@@ -3,6 +3,10 @@
     <h1>Edit Child</h1>
     <p>Update child profile attributes.</p>
   </div>
+  <div class="inline-actions">
+    <%= link_to "Open Chat", child_chats_path(@child), class: "btn btn-primary" %>
+    <%= link_to "View Child", child_path(@child), class: "btn" %>
+  </div>
 </div>
 
 <section class="card">

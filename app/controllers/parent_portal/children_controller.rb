@@ -21,6 +21,7 @@ module ParentPortal
     def insights
       @attachments = @child.attachments.includes(:communication).recent_first
       @insights = @child.insights.includes(:attachment).order(updated_at: :desc)
+      @latest_insight = @insights.first
     end
 
     def new

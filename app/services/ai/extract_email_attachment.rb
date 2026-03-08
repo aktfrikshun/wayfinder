@@ -8,6 +8,8 @@ module AI
 
         Email Body:
         #{attachment.normalized_text}
+
+        #{tabular_context}
       PROMPT
     end
   end

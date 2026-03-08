@@ -8,6 +8,8 @@ module AI
 
         Parent Note:
         #{attachment.normalized_text}
+
+        #{tabular_context}
       PROMPT
     end
   end

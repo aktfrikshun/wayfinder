@@ -6,6 +6,9 @@ RSpec.describe Attachments::ProcessAttachmentJob, type: :job do
 
     allow(Attachments::DetectShape).to receive(:call).and_call_original
     allow(Attachments::ExtractText).to receive(:call).and_call_original
+    allow(Attachments::ExtractTables).to receive(:call).with(attachment).and_return(
+      { "detected" => true, "header" => ["course", "q1"], "rows" => [{ "course" => "Math", "q1" => "97" }], "row_count" => 1 }
+    )
     allow(Attachments::Classify).to receive(:call).and_call_original
     allow(AI::ExtractAttachment).to receive(:call).with(attachment).and_return(
       raw_response: { "id" => "abc" },
@@ -18,6 +21,8 @@ RSpec.describe Attachments::ProcessAttachmentJob, type: :job do
     expect(attachment.processing_state).to eq("processed")
     expect(attachment.ai_status).to eq("complete")
     expect(attachment.extracted_payload).to include("summary" => "Student needs support")
+    expect(attachment.extracted_payload["tabular_data"]).to be_present
+    expect(attachment.metadata["tabular_data"]).to be_present
   end
 
   it "persists failure state" do

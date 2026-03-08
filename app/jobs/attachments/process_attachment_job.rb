@@ -8,6 +8,8 @@ module Attachments
 
       Attachments::DetectShape.call(attachment)
       Attachments::ExtractText.call(attachment)
+      tabular_data = Attachments::ExtractTables.call(attachment)
+      attachment.update!(metadata: attachment.metadata.to_h.merge("tabular_data" => tabular_data))
       Attachments::Classify.call(attachment)
 
       ai_result = AI::ExtractAttachment.call(attachment)
@@ -16,7 +18,9 @@ module Attachments
         processing_state: "processed",
         ai_status: "complete",
         ai_raw_response: ai_result[:raw_response],
-        extracted_payload: attachment.extracted_payload.to_h.merge(ai_result[:parsed_response]),
+        extracted_payload: attachment.extracted_payload.to_h
+          .merge("tabular_data" => tabular_data)
+          .merge(ai_result[:parsed_response].to_h),
         last_processed_at: Time.current
       )
       Insights::UpsertFromAttachment.call(attachment)

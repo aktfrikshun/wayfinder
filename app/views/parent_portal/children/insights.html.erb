@@ -9,6 +9,19 @@
 </div>
 
 <section class="card" style="margin-bottom: 1rem;">
+  <h3>Latest Narrative Insight</h3>
+  <% if @latest_insight.present? %>
+    <p style="white-space: pre-wrap;"><%= @latest_insight.body %></p>
+    <p class="muted" style="margin-top: 0.5rem;">
+      Source: <%= link_to @latest_insight.attachment.display_title, parent_communication_path(@latest_insight.attachment) %>
+      · <%= @latest_insight.updated_at.strftime("%Y-%m-%d %H:%M") %>
+    </p>
+  <% else %>
+    <p class="muted">No narrative insight yet.</p>
+  <% end %>
+</section>
+
+<section class="card" style="margin-bottom: 1rem;">
   <h3>Child Insights</h3>
   <% if @insights.any? %>
     <div class="table-wrap">

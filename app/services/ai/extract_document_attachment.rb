@@ -8,6 +8,8 @@ module AI
 
         Document Text:
         #{attachment.normalized_text}
+
+        #{tabular_context}
       PROMPT
     end
   end

@@ -1,0 +1,52 @@
+<div class="page-head">
+  <div>
+    <h1><%= @child.name %> Chats</h1>
+    <p>Ask questions about your child's growth and development.</p>
+  </div>
+  <div class="inline-actions">
+    <%= link_to "Back to Child", parent_child_path(@child), class: "btn" %>
+  </div>
+</div>
+
+<section class="card" style="margin-bottom: 1rem;">
+  <h3>Start a New Chat</h3>
+  <%= form_with url: parent_child_chats_path(@child), method: :post, local: true do |form| %>
+    <div class="form-grid">
+      <div class="full">
+        <%= form.label :opening_prompt, "Opening question (optional)" %>
+        <%= form.text_area :opening_prompt, placeholder: "How is Zammy doing academically and emotionally this quarter?" %>
+      </div>
+    </div>
+    <div class="toolbar" style="margin-top: 0.8rem;">
+      <%= form.submit "Start Chat", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</section>
+
+<section class="card">
+  <h3>Past Chats</h3>
+  <% if @chats.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Messages</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @chats.each do |chat| %>
+            <tr>
+              <td><%= link_to chat.display_title, parent_child_chat_path(@child, chat) %></td>
+              <td><%= chat.chat_messages.length %></td>
+              <td><%= chat.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted">No chats yet.</p>
+  <% end %>
+</section>

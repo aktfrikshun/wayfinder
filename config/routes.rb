@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   resources :children do
     get :insights, on: :member
     post :regenerate_insights, on: :member
+    resources :chats, controller: "child_chats", only: %i[index show create] do
+      post :messages, on: :member
+    end
   end
   resources :attachments, controller: "attachments"
   resources :communications do
@@ -44,6 +47,9 @@ Rails.application.routes.draw do
       post :regenerate_alias, on: :member
       post :regenerate_insights, on: :member
       get :insights, on: :member
+      resources :chats, controller: "child_chats", only: %i[index show create] do
+        post :messages, on: :member
+      end
       resources :communications, controller: "child_communications", except: :index do
         post :attachments, action: :create_attachment, on: :member
         delete "attachments/:attachment_id", action: :destroy_attachment, on: :member, as: :attachment
