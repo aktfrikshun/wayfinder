@@ -45,7 +45,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 # AWS S3 client for Active Storage and direct S3 operations
-gem "aws-sdk-s3", "~> 1.113"
+gem "aws-sdk-s3", "~> 1.217"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
