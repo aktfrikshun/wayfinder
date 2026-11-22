@@ -183,12 +183,11 @@ Pipeline runs:
 3. `bundle exec rails db:prepare`
 4. `bundle exec rspec`
 
-Pushes to `main` also trigger automatic Fly deploy via GitHub Actions.
-Required repository secret: `FLY_API_TOKEN`.
+Wayfinder now runs on Allen's Mac (`ops/launchd/wayfinder-local-server` in frikfan), so CI no longer deploys to Fly.
 
-## Fly Deployment
+## Fly Deployment (legacy)
 
-Fly deployment assets are included:
+The Fly app has been retired. These assets remain for reference:
 
 - `fly.toml` (web process, release migration command)
 - `bin/fly/setup_db` (unmanaged Postgres app setup)
